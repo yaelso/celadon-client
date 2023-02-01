@@ -1,10 +1,17 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import About from './pages/About';
 // import Profile from './pages/Profile';
 import NotFound from './pages/404';
+// import Layout from './components/Layout';
+
+// const MainLayout = () => {
+//     <Layout>
+//         <Outlet />
+//     </Layout>
+// }
 
 export const routes = [
     {
