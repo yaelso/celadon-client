@@ -4,6 +4,21 @@ export const mockUser = {
   email: "yael@celadon.com",
 };
 
+export const mockPokemon = [
+  {
+    id: 1,
+    name: "Bulbasaur",
+  },
+  {
+    id: 4,
+    name: "Charmander",
+  },
+  {
+    id: 7,
+    name: "Squirtle",
+  },
+];
+
 export const mockCategories = [
   {
     id: 1,
