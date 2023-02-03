@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Card, CardContent, Container, CssBaseline, Divider, Typography } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from './themes/forms';
+import { theme } from './themes/theme';
 
 const Home: React.FC = () => {
   return (

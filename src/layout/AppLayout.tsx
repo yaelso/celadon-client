@@ -8,7 +8,10 @@ import { Avatar, Box, Badge, Container, IconButton, InputBase, Menu, MenuItem, T
 import { AppSidebar } from './AppSidebar';
 import React, { useState, useCallback } from 'react';
 import { ThemeProvider, styled, alpha } from '@mui/material/styles';
-import { theme } from '../themes/forms';
+import { theme } from '../themes/theme';
+import { makeRoutes } from '../navigation/routes';
+import { Link } from 'react-router-dom';
+import { COLORS } from '../themes/colors';
 
 
 interface Props extends React.PropsWithChildren {}
@@ -69,6 +72,8 @@ const AppLayout: React.FC<Props> = props => {
     setAnchorEl(null);
   };
 
+  const routes = makeRoutes();
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -114,6 +119,13 @@ const AppLayout: React.FC<Props> = props => {
               onClick={toggleMenu}
             >
               <AccountCircle />
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ display: { sm: 'block', paddingLeft: 12 } }}>
+                Jane Doe
+              </Typography>
             </IconButton>
             <Menu
               id='menu-appbar'
@@ -148,9 +160,9 @@ const AppLayout: React.FC<Props> = props => {
                 }
               }}
             >
-              <MenuItem onClick={handleClose}><Avatar sx={{ bgcolor: "secondary.main" }}/>Profile</MenuItem>
+              <MenuItem onClick={handleClose}><Avatar sx={{ bgcolor: "secondary.main" }}/><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
               <Divider />
-              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/>Signout</MenuItem>
+              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Signout</Link></MenuItem>
             </Menu>
           </Box>
         </Toolbar>

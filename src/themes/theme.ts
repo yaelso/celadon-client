@@ -15,7 +15,6 @@ export const theme = createTheme({
     },
     typography: {
         fontSize: 16,
-        fontFamily: 'Source Sans Pro',
         button: {
             fontWeight: 600,
         },
