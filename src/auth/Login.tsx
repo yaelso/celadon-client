@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '../themes/forms';
+import { theme } from '../themes/theme';
 
 const Login: React.FC = () => {
   return (

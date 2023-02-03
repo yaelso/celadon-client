@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 import { Box, Card, CardContent, Container, CssBaseline, Divider, Typography } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './themes/theme';
+import { makeRoutes } from './navigation/routes';
+import { COLORS } from './themes/colors';
 
 const Home: React.FC = () => {
+  const routes = makeRoutes();
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="sm">
@@ -21,6 +25,10 @@ const Home: React.FC = () => {
             <Divider />
             <Typography sx={{ mb: 1.5, marginTop: 2 }}>
               This page will be the primary view for users that aren't logged in!
+            </Typography>
+            <Typography sx={{ textAlign: 'center'}}>
+              <Link to={routes.Login} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none', paddingRight: 50 }}>Login</Link>
+              <Link to={routes.Signup} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Signup</Link>
             </Typography>
           </CardContent>
         </Card>
