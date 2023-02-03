@@ -4,6 +4,8 @@ export type Routes = {
   Signup: string;
   Dashboard: string;
   Profile: string;
+  Pokedex: string;
+  Archive: string;
   Wildcard: string;
 };
 
@@ -13,6 +15,8 @@ export const makeRoutes = (): Routes => ({
     Signup: '/signup',
     Dashboard: '/dashboard',
     Profile: '/profile',
+    Pokedex: '/pokedex',
+    Archive: '/archive',
     Wildcard: '/*',
   }
 );

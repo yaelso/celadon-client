@@ -6,6 +6,8 @@ import Login from "../auth/Login";
 import Signup from "../auth/Signup";
 import Profile from "../core/Profile";
 import Dashboard from "../core/Dashboard";
+import Pokedex from '../core/Pokedex';
+import Archive from '../core/Archive';
 
 /**
  * Controls top-level navigation for the app
@@ -22,6 +24,8 @@ export const AppRouter: React.FC = () => {
       <Route path={routes.Signup} element={<Signup />} />
       <Route path={routes.Dashboard} element={<Dashboard />} />
       <Route path={routes.Profile} element={<Profile />} />
+      <Route path={routes.Pokedex} element={<Pokedex />} />
+      <Route path={routes.Archive} element={<Archive />} />
       <Route path={routes.Wildcard} element={<Home />} />
     </Routes>
   );

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { makeRoutes } from "./navigation/routes";
 import { AppRouter } from './navigation/AppRouter'
-// import './index.css';
+import './index.css';
 
 const routes = makeRoutes();
 

@@ -13,7 +13,7 @@ interface Props extends React.PropsWithChildren {}
 
 
 const AppLayout: React.FC<Props> = props => {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   const toggleSidebar = useCallback(
     () => setSidebarOpen(prev => !prev),
