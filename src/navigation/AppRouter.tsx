@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Routes, Route } from "react-router-dom";
 import { makeRoutes } from './routes';
 import Home from "../pages/Home";
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import About from "../pages/About";
+import Login from "../auth/Login";
+import Signup from "../auth/Signup";
 import Profile from "../pages/Profile";
 import Dashboard from "../pages/Dashboard";
 
@@ -21,7 +20,6 @@ export const AppRouter: React.FC = () => {
     <Routes>
       <Route path={routes.Login} element={<Login />} />
       <Route path={routes.Signup} element={<Signup />} />
-      <Route path={routes.About} element={<About />} />
       <Route path={routes.Dashboard} element={<Dashboard />} />
       <Route path={routes.Profile} element={<Profile />} />
       <Route path={routes.Wildcard} element={<Home />} />
