@@ -1,4 +1,6 @@
-export const mockUser = {
+import { CeladonUser } from "./auth/models";
+
+export const mockUser: CeladonUser = {
   id: 1303530535262046,
   name: "Yael",
   email: "yael@celadon.com",
