@@ -9,7 +9,7 @@ interface Props extends React.PropsWithChildren {}
 const AppNavbar: React.FC<Props> = props => {
   return (
     <AppBar position='relative'
-      sx={{ zIndex: 5, height: '50px', display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '30px', backgroundColor: COLORS.GREEN_DARK
+      sx={{ zIndex: 5, height: '50px', display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '35px', backgroundColor: COLORS.GREEN_DARK
     }}>
       {props.children}
     </AppBar>

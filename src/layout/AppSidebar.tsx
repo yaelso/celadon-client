@@ -45,7 +45,6 @@ export const AppSidebar: React.FC<Props> = props => {
           <ChevronLeftIcon />
         </IconButton>
       </DrawerHeader>
-      <Divider />
       <List>
         <ListItem>
           <ListItemButton>

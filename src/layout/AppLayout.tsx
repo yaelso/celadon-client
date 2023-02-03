@@ -53,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const AppLayout: React.FC<Props> = props => {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const toggleSidebar = useCallback(
@@ -130,7 +130,7 @@ const AppLayout: React.FC<Props> = props => {
                   '& .MuiAvatar-root': {
                     width: 32,
                     height: 32,
-                    ml: -0.7,
+                    ml: -0.5,
                     mr: 1,
                   },
                   '&:before': {
@@ -148,9 +148,9 @@ const AppLayout: React.FC<Props> = props => {
                 }
               }}
             >
-              <MenuItem onClick={handleClose}><Avatar />Profile</MenuItem>
+              <MenuItem onClick={handleClose}><Avatar sx={{ bgcolor: "secondary.main" }}/>Profile</MenuItem>
               <Divider />
-              <MenuItem onClick={handleClose}><Logout fontSize='small' sx={{marginRight: 1}}/>Signout</MenuItem>
+              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/>Signout</MenuItem>
             </Menu>
           </Box>
         </Toolbar>
