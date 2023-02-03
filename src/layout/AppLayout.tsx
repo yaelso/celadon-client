@@ -3,7 +3,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { Box, Badge, Container, IconButton, InputBase, Typography, Toolbar } from '@mui/material/';
+import Logout from '@mui/icons-material/Logout';
+import { Avatar, Box, Badge, Container, IconButton, InputBase, Menu, MenuItem, Typography, Toolbar, Divider } from '@mui/material/';
 import { AppSidebar } from './AppSidebar';
 import React, { useState, useCallback } from 'react';
 import { ThemeProvider, styled, alpha } from '@mui/material/styles';
@@ -53,11 +54,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const AppLayout: React.FC<Props> = props => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const toggleSidebar = useCallback(
     () => setSidebarOpen(prev => !prev),
     [],
   );
+
+  const toggleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -100,9 +111,47 @@ const AppLayout: React.FC<Props> = props => {
               size='large'
               edge='end'
               color='inherit'
+              onClick={toggleMenu}
             >
               <AccountCircle />
             </IconButton>
+            <Menu
+              id='menu-appbar'
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  padding: 1,
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.7,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    left: 75,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                }
+              }}
+            >
+              <MenuItem onClick={handleClose}><Avatar />Profile</MenuItem>
+              <Divider />
+              <MenuItem onClick={handleClose}><Logout fontSize='small' sx={{marginRight: 1}}/>Signout</MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppNavbar>
