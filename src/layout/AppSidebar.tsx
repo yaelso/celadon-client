@@ -1,5 +1,8 @@
-import { Drawer } from '@mui/material';
 import React from 'react';
+import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemButton, ListItemText } from '@mui/material';
+import Home from '@mui/icons-material/Home';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Analytics from '@mui/icons-material/Analytics';
 import { makeRoutes } from '../navigation/routes';
 import { Link } from 'react-router-dom';
 import { COLORS } from '../themes/colors';
@@ -18,24 +21,37 @@ export const AppSidebar: React.FC<Props> = props => {
       anchor='left'
       open={props.isOpen}
       onClose={props.toggleDrawer}
-      sx={{ zIndex: 2, backgroundColor: COLORS.GREEN_LIGHT }}
+      sx={{ zIndex: 2 }}
     >
-      <div style={{ padding: '16px' }}>
-      <div style={{ height: '48px' }} />
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div style={{padding: '8px' }}>
-          <Link to={routes.Dashboard} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Dashboard</Link>
-        </div>
-        <div style={{ height: '16px' }} />
-        <div style={{padding: '8px' }}>
-          <Link to={routes.Profile} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Profile</Link>
-        </div>
-        <div style={{ height: '16px' }} />
-        <div style={{padding: '8px' }}>
-          <Link to={routes.Root} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Home</Link>
-        </div>
-      </div>
-      </div>
+      <Divider />
+      <List>
+        <ListItem>
+          <ListItemButton>
+            <ListItemIcon>
+              <Home />
+            </ListItemIcon>
+            <ListItemText primary={<Link to={routes.Root} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Home</Link>} />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem>
+          <ListItemButton>
+            <ListItemIcon>
+              <Analytics />
+            </ListItemIcon>
+            <ListItemText primary={<Link to={routes.Dashboard} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Dashboard</Link>} />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem>
+          <ListItemButton>
+            <ListItemIcon>
+              <AccountCircle />
+            </ListItemIcon>
+            <ListItemText primary={<Link to={routes.Profile} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Profile</Link>} />
+          </ListItemButton>
+        </ListItem>
+      </List>
     </Drawer>
   );
 };
