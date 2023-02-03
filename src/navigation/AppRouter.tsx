@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Routes, Route } from "react-router-dom";
 import { makeRoutes } from './routes';
-import Home from "../pages/Home";
+import Home from "../Home";
 import Login from "../auth/Login";
 import Signup from "../auth/Signup";
-import Profile from "../pages/Profile";
-import Dashboard from "../pages/Dashboard";
+import Profile from "../core/Profile";
+import Dashboard from "../core/Dashboard";
 
 /**
  * Controls top-level navigation for the app
