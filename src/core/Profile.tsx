@@ -1,7 +1,12 @@
 import React from "react";
+import AppLayout from "../layout/AppLayout";
 
 const Profile: React.FC = () => {
-  return <div>Profile</div>;
+  return (
+    <AppLayout>
+      <div>Profile</div>
+    </AppLayout>
+  );
 };
 
 export default Profile;
