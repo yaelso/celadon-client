@@ -124,7 +124,7 @@ const AppLayout: React.FC<Props> = props => {
                 noWrap
                 component="div"
                 sx={{ display: { sm: 'block', paddingLeft: 12 } }}>
-                Jane Doe
+                {localStorage.getItem("name")}
               </Typography>
             </IconButton>
             <Menu
@@ -160,7 +160,7 @@ const AppLayout: React.FC<Props> = props => {
                 }
               }}
             >
-              <MenuItem onClick={handleClose}><Avatar sx={{ bgcolor: "secondary.main" }}/><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
+              <MenuItem onClick={handleClose}><Avatar alt={localStorage.getItem("name")} src={localStorage.getItem("profilePic")}/><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
               <Divider />
               <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Signout</Link></MenuItem>
             </Menu>

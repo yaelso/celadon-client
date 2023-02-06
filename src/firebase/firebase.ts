@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
 /**
  * Establishes Firebase configs and connection
@@ -33,7 +33,35 @@ export const signInWithGoogle = () => {
     signInWithPopup(auth, provider)
         .then((result) => {
             console.log(result);
+
+            const credential = GoogleAuthProvider.credentialFromResult(result)
+            const token = credential.accessToken;
+
+            const user = result.user;
+            const name = result.user.displayName;
+            const email = result.user.email;
+            const profilePic = result.user.photoURL;
+
+            localStorage.setItem("name", name);
+            localStorage.setItem("email", email);
+            localStorage.setItem("profilePic", profilePic)
         }).catch((e) => {
             console.log(e);
+
+            const errorCode = e.code;
+            const errorMessage = e.message;
+            const email = e.customData.email;
+            const credential = GoogleAuthProvider.credentialFromError(e);
     });
+};
+
+export const signOutOfCeladon = () => {
+    signOut(auth)
+        .then(() => {
+            // Sign out successful
+        })
+        .catch((e) => {
+            // An error happened
+            console.log(e);
+        });
 };
