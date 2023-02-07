@@ -8,7 +8,7 @@ const ProtectedRoute: React.FC<RouteProps> = (props) => {
     const routes = makeRoutes();
 
     if (!userProfile) {
-        return <Navigate to={routes.Login} replace />
+        return <Navigate to={routes.Root} replace />
     }
 
     return (
