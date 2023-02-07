@@ -44,7 +44,8 @@ export const signInWithGoogle = () => {
 
             localStorage.setItem("name", name);
             localStorage.setItem("email", email);
-            localStorage.setItem("profilePic", profilePic)
+            localStorage.setItem("profilePic", profilePic);
+            localStorage.setItem("authToken", token);
         }).catch((e) => {
             console.log(e);
 
