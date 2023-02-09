@@ -5,7 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './themes/theme';
 import { makeRoutes } from './navigation/routes';
 import { COLORS } from './themes/colors';
-import { signInWithGoogle } from "./firebase/firebase";
+import { signInWithGoogle } from "./firebase";
 
 const Home: React.FC = () => {
   const routes = makeRoutes();
