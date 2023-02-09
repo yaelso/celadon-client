@@ -10,6 +10,9 @@ const Archive: React.FC = () => {
     <AppLayout>
       <Box>
         <Breadcrumbs sx={{pt: 5}}>
+          <Link underline="hover" color="inherit" href={routes.Root}>
+            Home
+          </Link>
           <Link underline="hover" color="inherit" href={routes.Dashboard}>
             Dashboard
           </Link>

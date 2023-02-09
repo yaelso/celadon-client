@@ -11,6 +11,9 @@ const Profile: React.FC = () => {
       <CssBaseline />
       <Box>
         <Breadcrumbs sx={{pt: 5}}>
+          <Link underline="hover" color="inherit" href={routes.Root}>
+            Home
+          </Link>
           <Link underline="hover" color="inherit" href={routes.Dashboard}>
             Dashboard
           </Link>
