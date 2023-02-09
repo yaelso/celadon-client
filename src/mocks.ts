@@ -1,8 +1,10 @@
-export const mockUser = {
-  id: 1303530535262046,
-  name: "Yael",
-  email: "yael@celadon.com",
-};
+// import { CeladonUser } from "./auth/models";
+
+// export const mockUser: CeladonUser = {
+//   id: 1303530535262046,
+//   name: "Yael",
+//   email: "yael@celadon.com",
+// };
 
 export const mockPokemon = [
   {
