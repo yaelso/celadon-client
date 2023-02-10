@@ -3,6 +3,7 @@ export const API_ROUTES = () => {
 
     return {
         Categories:              `${apiRoot}/categories`,
+        Categories_Delete:       (id: number) => `${apiRoot}/categories/${id}`,
         Checklists:              `${apiRoot}/checklists`,
         Checklists_GetArchived:  `${apiRoot}/checklists/archive`,
         Checklists_GetFavorites: `${apiRoot}/checklists/favorites`,
