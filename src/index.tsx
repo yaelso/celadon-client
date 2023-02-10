@@ -12,7 +12,13 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter basename={routes.Root}>
-      <SnackbarProvider maxSnack={3}>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
         <AppRouter />
       </SnackbarProvider>
     </BrowserRouter>
