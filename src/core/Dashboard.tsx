@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Card, Grid, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper } from '@mui/material';
+import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper } from '@mui/material';
 import React from 'react';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -9,6 +9,8 @@ import Favorite from '@mui/icons-material/Favorite';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import AddIcon from '@mui/icons-material/Add';
+import Tooltip from '@mui/material/Tooltip/Tooltip';
 
 const Dashboard: React.FC = () => {
   const routes = makeRoutes();
@@ -48,16 +50,20 @@ const Dashboard: React.FC = () => {
                   pb: 3,
                 }}>
                   <ListItem divider={true}>
+                    <Tooltip title="mark in progress">
                       <Checkbox size="small"/>
+                    </Tooltip>
                       <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/>
-                      <IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton>
+                      <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
+                      <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
                   </ListItem>
                   <ListItem divider={true}>
+                    <Tooltip title="mark in progress">
                       <Checkbox size="small"/>
+                    </Tooltip>
                       <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/>
-                      <IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton>
+                      <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
+                      <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
                   </ListItem>
                 </List>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2}}>
@@ -65,6 +71,13 @@ const Dashboard: React.FC = () => {
                   <Button variant="outlined">Archive</Button>
                 </Box>
               </Paper>
+          </Grid>
+          <Grid item>
+            <Tooltip title="Add checklist">
+              <Fab>
+                <AddIcon />
+              </Fab>
+            </Tooltip>
           </Grid>
         </Grid>
       </Box>
