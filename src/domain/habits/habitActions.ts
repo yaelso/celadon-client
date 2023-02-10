@@ -1,51 +1,38 @@
-// import axios from 'axios';
-// import { Habit } from './models';
-// import React from 'react';
-// import { SuccessAction, ErrorAction, ResultAction } from '../../applicationState/types';
+import axios from 'axios';
+import { Habit } from './models';
+import { API_ROUTES } from '../../api/apiRoutes';
 
 
-// const SUCCESS_KEY = 'FetchHabits';
-// const ERROR_KEY   = 'FetchHabitsFailed';
+export const fetchHabits = (jwt: string) => axios.request<any, Habit[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().Habits,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+  },
+);
 
+export const postHabit = (jwt: string) => axios.request<any, Habit>(
+  {
+    method:  'POST',
+    url: API_ROUTES().Habits,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+  },
+);
 
-// const fetchHabitsSuccessAction = (
-//   habits: Habit[],
-// ): SuccessAction<Habit[]> => ({
-//   type: SUCCESS_KEY,
-//   data: habits,
-// });
+type DeletePayload = {
+  details: string;
+}
 
-// const fetchHabitsErrorAction = (error: any): ErrorAction => ({
-//   type:  ERROR_KEY,
-//   error: error,
-// });
-
-// const fetchHabits = (jwt: string) => axios.request<any, Habit[]>(
-//   {
-//     method:  'GET',
-//     url:     'http://localhost:5000/habits',
-//     headers: {
-//       'Authorization': `Bearer ${jwt}`,
-//     },
-//   },
-// );
-
-// export const fetchHabitsHandler = (dispatch: React.Dispatch<ResultAction<Habit[]>>, jwt: string) =>
-//   fetchHabits(jwt)
-//     .then(result => dispatch(fetchHabitsSuccessAction(result)))
-//     .catch(err => dispatch(fetchHabitsErrorAction(err)));
-
-// export const fetchHabitsReducer = (
-//   state: Habit[] | undefined,
-//   action: ResultAction<Habit[]>,
-// ): Habit[] | undefined => {
-//   if (action.type === ERROR_KEY) {
-//     const errorAction = action as ErrorAction;
-//     console.log(errorAction.error);
-//     return state;
-//   }
-
-//   const successAction = action as SuccessAction;
-
-//   return successAction.data;
-// };
+export const deleteHabit = (jwt: string, id: number) => axios.request<any, DeletePayload>(
+  {
+    method: 'DELETE',
+    url: API_ROUTES().Habits_Delete(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+);
