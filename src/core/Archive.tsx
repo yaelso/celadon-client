@@ -42,17 +42,25 @@ const Archive: React.FC = () => {
               }}>
                 <ListItem divider={true}>
                   <Checkbox size="small" disabled />
-                  <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
+                  <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
+                      <Typography variant="body2">
+                        A sample task title
+                      </Typography>
+                  </ListItemText>
                   <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
                 </ListItem>
                 <ListItem divider={true}>
                   <Checkbox size="small" disabled />
-                  <ListItemText primary={"task title 2"} sx={{ pl: 1, pr: 2}}/>
+                  <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
+                      <Typography variant="body2">
+                        A sample task title
+                      </Typography>
+                  </ListItemText>
                   <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
                 </ListItem>
               </List>
               <Box display='flex' justifyContent="center" sx={{ pb: 2}}>
-                <Button variant="outlined">Archive</Button>
+                <Button variant="contained">Unarchive</Button>
               </Box>
             </Paper>
           </Grid>
