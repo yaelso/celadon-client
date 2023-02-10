@@ -1,5 +1,5 @@
-import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper } from '@mui/material';
-import React from 'react';
+import { Box, Breadcrumbs, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper, TextField } from '@mui/material';
+import React, { useState } from 'react';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -11,9 +11,21 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip/Tooltip';
+import FormDialog from '../domain/checklists/FormDialog';
 
 const Dashboard: React.FC = () => {
   const routes = makeRoutes();
+
+  const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+
+  const handleCreateChecklistOpen = () => {
+    setCreateChecklistOpen(true);
+  }
+
+  const handleCreateChecklistClose = () => {
+    setCreateChecklistOpen(false);
+  }
+
 
   return (
     <AppLayout>
@@ -53,31 +65,40 @@ const Dashboard: React.FC = () => {
                     <Tooltip title="mark in progress">
                       <Checkbox size="small"/>
                     </Tooltip>
-                      <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
-                      <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
+                    <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
+                      <Typography variant="body2">
+                        A sample task title
+                      </Typography>
+                    </ListItemText>
+                    <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
+                    <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
                   </ListItem>
                   <ListItem divider={true}>
                     <Tooltip title="mark in progress">
                       <Checkbox size="small"/>
                     </Tooltip>
-                      <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
-                      <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
+                    <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
+                      <Typography variant="body2">
+                        Yet another sample task title
+                      </Typography>
+                    </ListItemText>
+                    <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
+                    <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
                   </ListItem>
                 </List>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2}}>
                   <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
-                  <Button variant="outlined">Archive</Button>
+                  <Button variant="contained">Archive</Button>
                 </Box>
               </Paper>
           </Grid>
           <Grid item>
             <Tooltip title="Add checklist">
-              <Fab>
+              <Fab color="primary" onClick={handleCreateChecklistOpen}>
                 <AddIcon />
               </Fab>
             </Tooltip>
+            <FormDialog open={createChecklistOpen} onClose={handleCreateChecklistClose}/>
           </Grid>
         </Grid>
       </Box>
