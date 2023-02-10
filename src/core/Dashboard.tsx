@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper } from '@mui/material';
+import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper, TextField, Menu, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -13,12 +13,22 @@ import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip/Tooltip';
 import PostChecklistFormDialog from '../domain/checklists/PostChecklistFormDialog';
 import PostCategoryFormDialog from '../domain/categories/PostCategoryFormDialog';
+import PostTaskFormDialog from '../domain/tasks/PostTaskFormDialog';
 
 const Dashboard: React.FC = () => {
   const routes = makeRoutes();
 
   const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
   const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
   const handleCreateCategoryOpen = () => {
@@ -63,9 +73,21 @@ const Dashboard: React.FC = () => {
               <Paper sx={{ pl: 3, pr: 3 }}>
                 <Box display="grid" justifyContent="space-between">
                   <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
-                    List Title
+                    Checklist Title
                   </Typography>
-                  <IconButton sx={{ gridColumn: 3}}><MoreHorizRoundedIcon/></IconButton>
+                  <IconButton sx={{ gridColumn: 3}} onClick={handleClick}><MoreHorizRoundedIcon/></IconButton>
+                  <Menu
+                    id="checklist-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={handleClose}>
+                      <ListItemText disableTypography={false}>
+                        <Typography fontSize="small">Delete Checklist</Typography>
+                      </ListItemText>
+                    </MenuItem>
+                  </Menu>
                   <Typography sx={{ fontSize: '.9em', pb: 3}}>
                     List description
                   </Typography>
@@ -96,6 +118,9 @@ const Dashboard: React.FC = () => {
                     </ListItemText>
                     <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
                     <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
+                  </ListItem>
+                  <ListItem>
+                    <TextField id="filled-basic" label="add task" variant="filled" sx={{ pt: 2, width: "100%"}}/>
                   </ListItem>
                 </List>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2}}>
