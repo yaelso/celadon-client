@@ -26,41 +26,35 @@ const Archive: React.FC = () => {
       </Box>
       <Box>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
-      <Grid item >
-              <Paper sx={{ pl: 3, pr: 3 }}>
-                <Box display="grid" justifyContent="space-between">
-                  <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
-                    List Title
-                  </Typography>
-                  <IconButton sx={{ gridColumn: 3}}><MoreHorizRoundedIcon/></IconButton>
-                  <Typography sx={{ fontSize: '.9em', pb: 3}}>
-                    List description
-                  </Typography>
-                </Box>
-                <List sx={{
-                  pb: 3,
-                }}>
-                  <ListItem>
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Checkbox disabled />
-                      <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} disabled/>
-                    </Box>
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Checkbox disabled />
-                      <ListItemText primary={"task title 2"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} disabled/>
-                    </Box>
-                  </ListItem>
-                  <Divider />
-                </List>
-                <Box display='flex' justifyContent="center" sx={{ pb: 2}}>
-                  <Button variant="outlined">Archive</Button>
-                </Box>
-              </Paper>
+        <Grid item >
+          <Paper sx={{ pl: 3, pr: 3 }}>
+            <Box display="grid" justifyContent="space-between">
+              <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
+                List Title
+              </Typography>
+              <IconButton sx={{ gridColumn: 3}}><MoreHorizRoundedIcon/></IconButton>
+              <Typography sx={{ fontSize: '.9em', pb: 3}}>
+                List description
+              </Typography>
+            </Box>
+              <List sx={{
+                pb: 3,
+              }}>
+                <ListItem divider={true}>
+                  <Checkbox size="small" disabled />
+                  <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
+                  <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
+                </ListItem>
+                <ListItem divider={true}>
+                  <Checkbox size="small" disabled />
+                  <ListItemText primary={"task title 2"} sx={{ pl: 1, pr: 2}}/>
+                  <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
+                </ListItem>
+              </List>
+              <Box display='flex' justifyContent="center" sx={{ pb: 2}}>
+                <Button variant="outlined">Archive</Button>
+              </Box>
+            </Paper>
           </Grid>
         </Grid>
       </Box>

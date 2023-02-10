@@ -28,7 +28,7 @@ const Profile: React.FC = () => {
         </Typography>
       </Box>
       <Box>
-        <img src={localStorage.getItem("profilePic")} alt="User Google profile picture" />
+        <img src={localStorage.getItem("profilePic")} alt="User" />
         <Typography>
           {localStorage.getItem("name")}
         </Typography>

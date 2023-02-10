@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
         </Typography>
         <Divider />
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
-          <Grid item >
+          <Grid item>
               <Paper sx={{ pl: 3, pr: 3 }}>
                 <Box display="grid" justifyContent="space-between">
                   <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
@@ -47,24 +47,18 @@ const Dashboard: React.FC = () => {
                 <List sx={{
                   pb: 3,
                 }}>
-                  <ListItem>
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Checkbox />
+                  <ListItem divider={true}>
+                      <Checkbox size="small"/>
                       <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} />
-                      <IconButton><DeleteOutlineRoundedIcon /></IconButton>
-                    </Box>
+                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/>
+                      <IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton>
                   </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                      <Checkbox />
-                      <ListItemText primary={"task title 2"} sx={{ pl: 1, pr: 2}}/>
-                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} />
-                      <IconButton><DeleteOutlineRoundedIcon /></IconButton>
-                    </Box>
+                  <ListItem divider={true}>
+                      <Checkbox size="small"/>
+                      <ListItemText primary={"task title 1"} sx={{ pl: 1, pr: 2}}/>
+                      <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/>
+                      <IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton>
                   </ListItem>
-                  <Divider />
                 </List>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2}}>
                   <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
