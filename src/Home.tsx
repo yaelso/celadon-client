@@ -4,7 +4,6 @@ import { Box, Button, Card, CardContent, Container, CssBaseline, Divider, ImageL
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './themes/theme';
 import { makeRoutes } from './navigation/routes';
-import { COLORS } from './themes/colors';
 import { signInWithGoogle } from "./firebase";
 // import firebase from "assets/firebase.svg";
 // import flask from "./assets/flask.svg";
@@ -60,44 +59,58 @@ const Home: React.FC = () => {
             flexDirection: "column",
           }}
         >
-          <Card
+          <Box
             sx={{
-              backgroundColor: "pink",
-              alignSelf: "center",
-            }}
-          >
-            <Typography variant="h5" component="h6" gutterBottom>
-              {"Feature 1"}
-            </Typography>
-            <Typography variant="h6" component="h6" gutterBottom>
-              {"Description about feature 1"}
-            </Typography>
-            <Typography variant="h5" component="h6" gutterBottom>
-              {"Feature 2"}
-            </Typography>
-            <Typography variant="h6" component="h6" gutterBottom>
-              {"Description about feature 2"}
-            </Typography>
-            <Typography variant="h5" component="h6" gutterBottom>
-              {"Feature 3"}
-            </Typography>
-            <Typography variant="h6" component="h6" gutterBottom>
-              {"Description about feature 3"}
-            </Typography>
-          </Card>
-          <Card
-            sx={{
-              backgroundColor: "pink",
-              alignSelf: "center",
-            }}
-          >
-            <Typography variant="h5" component="h6" gutterBottom>
-              {"More Text About Celadon"}
-            </Typography>
-            <Typography variant="h6" component="h6" gutterBottom>
-              {"This will be the description section below the above heading"}
-            </Typography>
-          </Card>
+              display: "flex",
+              justifyContent: "center",
+            }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                backgroundColor: "pink",
+                alignSelf: "center",
+                width: "30%"
+              }}
+            >
+              <Box>
+                <Typography variant="h5" component="h6" gutterBottom>
+                  {"Feature 1"}
+                </Typography>
+                <Typography variant="h6" component="h6" gutterBottom>
+                  {"Description about feature 1"}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="h5" component="h6" gutterBottom>
+                  {"Feature 2"}
+                </Typography>
+                <Typography variant="h6" component="h6" gutterBottom>
+                  {"Description about feature 2"}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="h5" component="h6" gutterBottom>
+                  {"Feature 3"}
+                </Typography>
+                <Typography variant="h6" component="h6" gutterBottom>
+                  {"Description about feature 3"}
+                </Typography>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                backgroundColor: "lightyellow",
+              }}
+            >
+              <Typography variant="h5" component="h6" gutterBottom>
+                {"More Text About Celadon"}
+              </Typography>
+              <Typography variant="h6" component="h6" gutterBottom>
+                {"This will be the description section below the above heading"}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
         <Box
           sx={{
