@@ -1,19 +1,21 @@
-// import * as React from 'react';
-// import { Navigate, Route, RouteProps } from 'react-router-dom';
-// import { useAppState } from '../applicationState/hooks';
-// import { makeRoutes } from './routes';
+import * as React from 'react';
+import { Navigate, Route, RouteProps } from 'react-router-dom';
+import { useLocalStorage } from '../applicationState/hooks';
+import { makeRoutes } from './routes';
 
-// const ProtectedRoute: React.FC<RouteProps> = (props) => {
-//     const userProfile = useAppState(state => state.profile);
-//     const routes = makeRoutes();
+const ProtectedRoute: React.FC<RouteProps> = (props) => {
+    const [jwt, _] = useLocalStorage('accessToken');
+    const routes = makeRoutes();
 
-//     if (!userProfile) {
-//         return <Navigate to={routes.Root} replace />
-//     }
+    if (!jwt) {
+        return (
+            <Navigate to={routes.Root} replace />
+        )
+    }
 
-//     return (
-//         <Route {...props}/>
-//     );
-// };
+    return (
+        <Route {...props}/>
+    );
+};
 
-// export default ProtectedRoute;
+export default ProtectedRoute;
