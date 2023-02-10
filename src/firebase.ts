@@ -34,25 +34,20 @@ export const signInWithGoogle = () => {
         .then((result) => {
             console.log(result);
 
-            const credential = GoogleAuthProvider.credentialFromResult(result)
-            const token = credential.accessToken;
-
             const user = result.user;
-            const name = result.user.displayName;
-            const email = result.user.email;
-            const profilePic = result.user.photoURL;
+            const name = user.displayName;
+            const email = user.email;
+            const profilePic = user.photoURL;
 
             localStorage.setItem("name", name);
             localStorage.setItem("email", email);
             localStorage.setItem("profilePic", profilePic);
-            localStorage.setItem("authToken", token);
-        }).catch((e) => {
-            console.log(e);
 
-            const errorCode = e.code;
-            const errorMessage = e.message;
-            const email = e.customData.email;
-            const credential = GoogleAuthProvider.credentialFromError(e);
+            return user.getIdToken();
+        })
+        .then(token => localStorage.setItem('authToken', token))
+        .catch((e) => {
+            console.log(e);
     });
 };
 
