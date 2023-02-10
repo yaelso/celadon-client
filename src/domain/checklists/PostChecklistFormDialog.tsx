@@ -14,7 +14,7 @@ type Props = {
 };
 
 
-const FormDialog: React.FC<Props> = props => {
+const PostChecklistFormDialog: React.FC<Props> = props => {
     return (
         <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>Create a Checklist</DialogTitle>
@@ -49,4 +49,4 @@ const FormDialog: React.FC<Props> = props => {
     );
 };
 
-export default FormDialog;
+export default PostChecklistFormDialog;

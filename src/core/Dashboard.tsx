@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper, TextField } from '@mui/material';
+import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper } from '@mui/material';
 import React, { useState } from 'react';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -11,12 +11,23 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip/Tooltip';
-import FormDialog from '../domain/checklists/FormDialog';
+import PostChecklistFormDialog from '../domain/checklists/PostChecklistFormDialog';
+import PostCategoryFormDialog from '../domain/categories/PostCategoryFormDialog';
 
 const Dashboard: React.FC = () => {
   const routes = makeRoutes();
 
+  const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
   const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+
+
+  const handleCreateCategoryOpen = () => {
+    setCreateCategoryOpen(true);
+  }
+
+  const handleCreateCategoryClose = () => {
+    setCreateCategoryOpen(false);
+  }
 
   const handleCreateChecklistOpen = () => {
     setCreateChecklistOpen(true);
@@ -37,7 +48,8 @@ const Dashboard: React.FC = () => {
           <Typography color="text.primary">Dashboard</Typography>
         </Breadcrumbs>
       </Box>
-      <Button variant="contained" startIcon={<AddRoundedIcon />}>Add Category</Button>
+      <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={handleCreateCategoryOpen}>Add Category</Button>
+      <PostCategoryFormDialog open={createCategoryOpen} onClose={handleCreateCategoryClose} />
       <Box>
         <Typography variant="h5" sx={{pt: 5, pb: 1}}>
           {"Category Name"}
@@ -98,7 +110,7 @@ const Dashboard: React.FC = () => {
                 <AddIcon />
               </Fab>
             </Tooltip>
-            <FormDialog open={createChecklistOpen} onClose={handleCreateChecklistClose}/>
+            <PostChecklistFormDialog open={createChecklistOpen} onClose={handleCreateChecklistClose}/>
           </Grid>
         </Grid>
       </Box>
