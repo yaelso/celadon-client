@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Button, Card, CardContent, Container, CssBaseline, Divider, ImageList, ImageListItem, Typography } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
+import { Box, Button, Card, CardContent, CardMedia, Container, CssBaseline, Divider, Grid, ImageList, ImageListItem, Paper, Typography } from '@mui/material';
+import { styled, ThemeProvider } from '@mui/material/styles';
 import { theme } from './themes/theme';
 import { makeRoutes } from './navigation/routes';
 import { signInWithGoogle } from "./firebase";
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
           flexDirection: "column",
           minHeight: "100vh",
           width: "100vw",
-          backgroundColor: "lightyellow",
+          // backgroundColor: "lightyellow",
         }}
       >
         <Container
@@ -52,104 +52,113 @@ const Home: React.FC = () => {
           </Typography>
           <Button variant="contained" onClick={signInWithGoogle} sx={{mt: 2, ml: 5}}>Log in with Google</Button>
         </Container>
-        <Box
+        <Grid container
           sx={{
-            backgroundColor: "grey",
+            p: 4,
+            justifyContent: 'center',
+            alignItems: 'center',
             display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box
+            flexDirection: "row",
+            }}
+          direction="column">
+          <Grid item
             sx={{
               display: "flex",
-              justifyContent: "center",
+              flexDirection: "row",
+              // backgroundColor: "pink",
+              alignItems: "center",
+              width: "30%",
+              p: 4,
+            }}
+          >
+            <Box sx={{
+              p: 2
             }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                backgroundColor: "pink",
-                alignSelf: "center",
-                width: "30%"
-              }}
-            >
-              <Box>
-                <Typography variant="h5" component="h6" gutterBottom>
-                  {"Feature 1"}
-                </Typography>
-                <Typography variant="h6" component="h6" gutterBottom>
-                  {"Description about feature 1"}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="h5" component="h6" gutterBottom>
-                  {"Feature 2"}
-                </Typography>
-                <Typography variant="h6" component="h6" gutterBottom>
-                  {"Description about feature 2"}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="h5" component="h6" gutterBottom>
-                  {"Feature 3"}
-                </Typography>
-                <Typography variant="h6" component="h6" gutterBottom>
-                  {"Description about feature 3"}
-                </Typography>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                backgroundColor: "lightyellow",
-              }}
-            >
               <Typography variant="h5" component="h6" gutterBottom>
-                {"More Text About Celadon"}
+                {"Feature 1"}
               </Typography>
-              <Typography variant="h6" component="h6" gutterBottom>
-                {"This will be the description section below the above heading"}
+              <Typography variant="body2" gutterBottom>
+                {"Description about feature 1"}
               </Typography>
             </Box>
-          </Box>
-        </Box>
-        <Box
+            <Box sx={{
+              p: 2
+            }}>
+              <Typography variant="h5" component="h6" gutterBottom>
+                {"Feature 2"}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {"Description about feature 2"}
+              </Typography>
+            </Box>
+            <Box sx={{
+              p: 2
+            }}>
+              <Typography variant="h5" component="h6" gutterBottom>
+                {"Feature 3"}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {"Description about feature 3"}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item
+            sx={{
+              textAlign: 'left',
+              p: 2
+            }}
+          >
+            <Typography variant="h5" component="h6" gutterBottom>
+              {"More Text About Celadon"}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              {"This will be the description section below the above heading"}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 2, sm: 8, md: 12 }}
           sx={{
-            backgroundColor: "lightgrey",
+            p: 4,
+            justifyContent: 'center',
+            alignItems: 'center',
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          <Typography variant="h5" component="h2" gutterBottom>
-            {"About the Creator"}
-          </Typography>
-          <Card
-            sx={{
-              backgroundColor: "pink",
-              alignSelf: "center",
             }}
-          >
-            <Typography variant="h5" component="h2" gutterBottom>
-              {"Yael Echols"}
-            </Typography>
-            <Typography variant="h6" component="h2" gutterBottom>
-              {"Subtitle"}
-            </Typography>
-          </Card>
-          <Card
-            sx={{
-              backgroundColor: "pink",
-              alignSelf: "center",
-            }}
-          >
-            <Typography variant="h6" component="h2" gutterBottom>
-              {"This will be a description section detailing a little bit about me"}
-            </Typography>
-          </Card>
-        </Box>
+          direction="column">
+            <Grid item sx={{ xs: 1 }}>
+              <Typography variant="h5" component="h2" gutterBottom sx={{ alignSelf: 'center'}}>
+                {"About the Creator"}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Card>
+                <CardMedia
+                  sx={{ height: 140 }}
+                  src={localStorage.getItem("profilePic")}
+                  title="Yael"
+                />
+                <CardContent>
+                  <Typography variant="h5" component="div" gutterBottom>
+                    Yael Echols
+                  </Typography>
+                  <Typography variant="body2" gutterBottom>
+                    Subtitle
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={1}>
+              <Box>
+                <Typography variant="body1" gutterBottom>
+                  This will be some text about me and my background before and leading up to Ada!
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
         <Box
           sx={{
-            backgroundColor: "lightblue",
+            // backgroundColor: "lightblue",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
