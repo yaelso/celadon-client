@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Category } from './models';
 import React from 'react';
 import { SuccessAction, ErrorAction, ResultAction } from '../../applicationState/types';
+import { API_ROUTES } from '../../api/apiRoutes';
 
 
 const SUCCESS_KEY = 'FetchCategories';
@@ -16,14 +17,14 @@ const fetchCategoriesSuccessAction = (
 });
 
 const fetchCategoriesErrorAction = (error: any): ErrorAction => ({
-  type:  ERROR_KEY,
+  type: ERROR_KEY,
   error: error,
 });
 
 const fetchCategories = (jwt: string) => axios.request<any, Category[]>(
   {
-    method:  'GET',
-    url:     'http://localhost:5000/categories',
+    method: 'GET',
+    url: API_ROUTES().Categories,
     headers: {
       'Authorization': `Bearer ${jwt}`,
     },
