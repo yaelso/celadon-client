@@ -17,8 +17,7 @@ root.render(
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'right',
-        }}
-      >
+        }}>
         <AppRouter />
       </SnackbarProvider>
     </BrowserRouter>
