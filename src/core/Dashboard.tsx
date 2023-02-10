@@ -15,21 +15,21 @@ const Dashboard: React.FC = (props) => {
   // API callbacks
   const fetchAllCategories = () => fetchCategories(jwt)
     .then(data => setCategories(data))
-    .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' }));
 
   const postNewCategory = () => postCategory(jwt)
     .then(data => setCategories(prev => {
       [data].concat(prev);
-      snackbar.enqueueSnackbar('Category successfully created!');
+      snackbar.enqueueSnackbar('Category successfully created!', { variant: 'success' });
     }))
-    .catch(() => snackbar.enqueueSnackbar('Category creation failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
 
   const deleteCategoryById = (id: number) => deleteCategory(jwt, id)
     .then(data => {
       console.log(data);
-      snackbar.enqueueSnackbar('Category deleted');
+      snackbar.enqueueSnackbar('Category deleted', { variant: 'success' });
     })
-    .catch(() => snackbar.enqueueSnackbar('Category creation failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
 
   useEffect(
     () => {

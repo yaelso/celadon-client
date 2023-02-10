@@ -14,21 +14,21 @@ const Profile: React.FC = () => {
   // API callbacks
   const fetchAllHabits = () => fetchHabits(jwt)
     .then(data => setHabits(data))
-    .catch(() => snackbar.enqueueSnackbar('Habits fetch failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Habits fetch failed!', { variant: 'error' }));
 
   const postNewHabit = () => postHabit(jwt)
     .then(data => setHabits(prev => {
       [data].concat(prev);
-      snackbar.enqueueSnackbar('Habit successfully created!');
+      snackbar.enqueueSnackbar('Habit successfully created!', { variant: 'success' });
     }))
-    .catch(() => snackbar.enqueueSnackbar('Habit creation failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
 
   const deleteHabitById = (id: number) => deleteHabit(jwt, id)
     .then(data => {
       console.log(data);
-      snackbar.enqueueSnackbar('Habit deleted');
+      snackbar.enqueueSnackbar('Habit deleted', { variant: 'success' });
     })
-    .catch(() => snackbar.enqueueSnackbar('Habit creation failed!'));
+    .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
 
   useEffect(
     () => {
