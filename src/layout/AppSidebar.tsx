@@ -7,9 +7,11 @@ import Dashboard from '@mui/icons-material/Dashboard';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ViewCozy from '@mui/icons-material/ViewCozy';
 import Archive from '@mui/icons-material/Archive';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { makeRoutes } from '../navigation/routes';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { COLORS } from '../themes/colors';
+import { signOutOfCeladon } from '../firebase';
 
 
 type Props = {
@@ -87,6 +89,14 @@ export const AppSidebar: React.FC<Props> = props => {
               <Archive />
             </ListItemIcon>
             <ListItemText primary={<Link to={routes.Archive} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }}>Archive</Link>} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton>
+            <ListItemIcon>
+              <LogoutRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary={<Link to={routes.Root} style={{ color: COLORS.GREEN_DARKER, textDecoration: 'none' }} onClick={signOutOfCeladon}>Sign Out</Link>} />
           </ListItemButton>
         </ListItem>
       </List>

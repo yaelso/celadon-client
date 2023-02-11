@@ -12,6 +12,7 @@ import { theme } from '../themes/theme';
 import { makeRoutes } from '../navigation/routes';
 import { Link } from 'react-router-dom';
 import { COLORS } from '../themes/colors';
+import { signOutOfCeladon } from '../firebase';
 
 
 interface Props extends React.PropsWithChildren {}
@@ -162,7 +163,7 @@ const AppLayout: React.FC<Props> = props => {
             >
               <MenuItem onClick={handleClose}><Avatar alt={localStorage.getItem("name")} src={localStorage.getItem("profilePic")}/><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
               <Divider />
-              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Signout</Link></MenuItem>
+              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }} onClick={signOutOfCeladon}>Signout</Link></MenuItem>
             </Menu>
           </Box>
         </Toolbar>
