@@ -1,5 +1,8 @@
 import { createTheme } from "@mui/material/styles";
 import { COLORS } from './colors';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 export const theme = createTheme({
     palette: {
@@ -14,9 +17,10 @@ export const theme = createTheme({
         },
     },
     typography: {
+        fontFamily: 'Roboto',
         fontSize: 16,
         button: {
-            fontWeight: 600,
+            fontWeight: 700,
         },
     },
 });
