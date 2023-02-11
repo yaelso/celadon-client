@@ -13,6 +13,7 @@ import { ReactComponent as PostgresIcon } from './assets/postgresql.svg';
 import { ReactComponent as ReactIcon } from './assets/react.svg';
 import { ReactComponent as ReactRouter } from './assets/reactrouter.svg';
 import { ReactComponent as TypeScriptIcon } from './assets/typescript.svg';
+import YaelOnTheBeach from './assets/yael.png';
 
 const Home: React.FC = () => {
   const routes = makeRoutes();
@@ -48,7 +49,7 @@ const Home: React.FC = () => {
             Celadon
           </Typography>
           <Typography variant="h5" component="h2" gutterBottom sx={{ml: 5}}>
-            {"This will have a little information about Celadon"}
+            {"A gamified productivity app for busy students and lifelong learners"}
           </Typography>
           <Button variant="contained" onClick={signInWithGoogle} sx={{mt: 2, ml: 5}}>Log in with Google</Button>
         </Container>
@@ -66,39 +67,39 @@ const Home: React.FC = () => {
               display: "flex",
               flexDirection: "row",
               // backgroundColor: "pink",
-              alignItems: "center",
-              width: "30%",
+              alignItems: "flex-start",
               p: 4,
             }}
+            xs={4}
           >
             <Box sx={{
-              p: 2
+              p: 2,
             }}>
-              <Typography variant="h5" component="h6" gutterBottom>
-                {"Feature 1"}
+              <Typography variant="h6" component="h6" gutterBottom>
+                {"Contextual Organization"}
               </Typography>
               <Typography variant="body2" gutterBottom>
-                {"Description about feature 1"}
+                {"Create checklists and tasks in groups of categories to cleanly divide them"}
+              </Typography>
+            </Box>
+            <Box sx={{
+              p: 2,
+            }}>
+              <Typography variant="h6" component="h6" gutterBottom>
+                {"Archive, Schedule, & Favorite"}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {"Archive and favorite checklists at any time for later reflection and schedule tasks for easy access"}
               </Typography>
             </Box>
             <Box sx={{
               p: 2
             }}>
-              <Typography variant="h5" component="h6" gutterBottom>
-                {"Feature 2"}
+              <Typography variant="h6" component="h6" gutterBottom>
+                {"Collect Pokemon"}
               </Typography>
               <Typography variant="body2" gutterBottom>
-                {"Description about feature 2"}
-              </Typography>
-            </Box>
-            <Box sx={{
-              p: 2
-            }}>
-              <Typography variant="h5" component="h6" gutterBottom>
-                {"Feature 3"}
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                {"Description about feature 3"}
+                {"Collect and level Pokemon with every task and habit you complete"}
               </Typography>
             </Box>
           </Grid>
@@ -118,38 +119,43 @@ const Home: React.FC = () => {
         </Grid>
         <Grid container
           spacing={{ xs: 2, md: 3 }}
-          columns={{ xs: 2, sm: 8, md: 12 }}
           sx={{
             p: 4,
             justifyContent: 'center',
             alignItems: 'center',
-            display: "flex",
             }}
           direction="column">
-            <Grid item sx={{ xs: 1 }}>
+            <Grid item xs={1}>
               <Typography variant="h5" component="h2" gutterBottom sx={{ alignSelf: 'center'}}>
                 {"About the Creator"}
               </Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item
+              sx={{
+              display: "flex",
+              flexDirection: "row",
+            }}>
               <Card>
                 <CardMedia
-                  sx={{ height: 140 }}
-                  src={localStorage.getItem("profilePic")}
-                  title="Yael"
+                  component="img"
+                  height="160"
+                  image={YaelOnTheBeach}
+                  alt="Yael"
                 />
-                <CardContent>
+                <CardContent sx={{ p: 3 }}>
                   <Typography variant="h5" component="div" gutterBottom>
                     Yael Echols
                   </Typography>
                   <Typography variant="body2" gutterBottom>
-                    Subtitle
+                    Ada D18
                   </Typography>
+                  <Button size="small">Github</Button>
+                  <Button size="small">LinkedIn</Button>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={1}>
-              <Box>
+              <Box sx={{
+                pl: 4
+              }}>
                 <Typography variant="body1" gutterBottom>
                   This will be some text about me and my background before and leading up to Ada!
                 </Typography>
@@ -194,17 +200,6 @@ const Home: React.FC = () => {
               <TypeScriptIcon />
             </Grid>
           </Grid>
-
-          {/* <Box sx={{ display: "flex", flexDirection: "row" }}>
-            <FirebaseIcon />
-            <FlaskIcon />
-            <GoogleIcon />
-            <MuiIcon />
-            <PostgresIcon />
-            <ReactIcon />
-            <ReactRouter />
-            <TypeScriptIcon />
-          </Box> */}
         </Box>
         <Box
           component="footer"
