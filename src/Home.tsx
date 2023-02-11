@@ -5,14 +5,14 @@ import { styled, ThemeProvider } from '@mui/material/styles';
 import { theme } from './themes/theme';
 import { makeRoutes } from './navigation/routes';
 import { signInWithGoogle } from "./firebase";
-// import firebase from "assets/firebase.svg";
-// import flask from "./assets/flask.svg";
-// import google from "./assets/google.svg";
-// import mui from "./assets/mui.svg";
-// import postgresql from "./assets/postgresql.svg";
-// import react from "./assets/react.svg";
-// import reactrouter from "./assets/reactrouter.svg";
-// import typescript from "./assets/typescript.svg";
+import { ReactComponent as FirebaseIcon } from './assets/firebase.svg';
+import { ReactComponent as FlaskIcon } from './assets/flask.svg';
+import { ReactComponent as GoogleIcon } from './assets/google.svg';
+import { ReactComponent as MuiIcon } from './assets/mui.svg';
+import { ReactComponent as PostgresIcon } from './assets/postgresql.svg';
+import { ReactComponent as ReactIcon } from './assets/react.svg';
+import { ReactComponent as ReactRouter } from './assets/reactrouter.svg';
+import { ReactComponent as TypeScriptIcon } from './assets/typescript.svg';
 
 const Home: React.FC = () => {
   const routes = makeRoutes();
@@ -162,43 +162,49 @@ const Home: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            pb: 3,
           }}
         >
-          <Typography variant="h5" component="h2" gutterBottom>
+          <Typography variant="h5" component="h2" gutterBottom sx={{ pb: 2 }}>
             {"Powered By"}
           </Typography>
-          <ImageList
-            sx={{
-              flexWrap: "wrap",
-            }}
-            cols={8}
-            gap={30}
-          >
-            {/* <ImageListItem>
-              <img src={firebase} alt="Firebase" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={flask} alt="Flask" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={google} alt="Google" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={mui} alt="MUI" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={postgresql} alt="Postgresql" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={react} alt="React" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={reactrouter} alt="React Router" />
-            </ImageListItem>
-            <ImageListItem>
-              <img src={typescript} alt="TypeScript" />
-            </ImageListItem> */}
-          </ImageList>
+          <Grid container spacing={4} xs={10} justifyContent="center" sx={{ p: 2 }}>
+            <Grid item xs={2} sm={6} md={1}>
+              <FirebaseIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <FlaskIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <GoogleIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <MuiIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <PostgresIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <ReactIcon />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <ReactRouter />
+            </Grid>
+            <Grid item xs={2} sm={6} md={1}>
+              <TypeScriptIcon />
+            </Grid>
+          </Grid>
+
+          {/* <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <FirebaseIcon />
+            <FlaskIcon />
+            <GoogleIcon />
+            <MuiIcon />
+            <PostgresIcon />
+            <ReactIcon />
+            <ReactRouter />
+            <TypeScriptIcon />
+          </Box> */}
         </Box>
         <Box
           component="footer"
