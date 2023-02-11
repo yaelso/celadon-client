@@ -1,4 +1,5 @@
 import { Box, Breadcrumbs, CssBaseline, Link, Typography } from "@mui/material";
+import Grid from '@mui/material/Unstable_Grid2';
 import React from "react";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
@@ -36,6 +37,11 @@ const Profile: React.FC = () => {
       <Box>
         <Typography>
           {"Habits"}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography>
+          {"Schedule"}
         </Typography>
       </Box>
       <Box>

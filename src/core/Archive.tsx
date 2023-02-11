@@ -66,8 +66,6 @@ const Archive: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-
-
     </AppLayout>
   )
 };
