@@ -1,4 +1,5 @@
-import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton, Checkbox, Typography, Paper, TextField, Menu, MenuItem } from '@mui/material';
+import { Box, Breadcrumbs, Button, Card, Grid, Fab, Divider, Link, List, ListItem, ListItemButton, ListItemText, ListItemIcon,
+  IconButton, Checkbox, Typography, Paper, TextField, Menu, MenuItem } from '@mui/material';
 import React, { useState } from 'react';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -14,6 +15,9 @@ import Tooltip from '@mui/material/Tooltip/Tooltip';
 import PostChecklistFormDialog from '../domain/checklists/PostChecklistFormDialog';
 import PostCategoryFormDialog from '../domain/categories/PostCategoryFormDialog';
 import PostTaskFormDialog from '../domain/tasks/PostTaskFormDialog';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreTaskContextMenu from '../domain/tasks/MoreTaskContextMenu';
+import MoreChecklistContextMenu from '../domain/checklists/MoreChecklistContextMenu';
 
 const Dashboard: React.FC = () => {
   const routes = makeRoutes();
@@ -21,13 +25,22 @@ const Dashboard: React.FC = () => {
   const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
   const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const [checklistAnchorEl, setChecklistAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openChecklist = Boolean(checklistAnchorEl);
+  const handleChecklistClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setChecklistAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleChecklistClose = () => {
+    setChecklistAnchorEl(null);
+  };
+
+  const [taskAnchorEl, setTaskAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openTask = Boolean(taskAnchorEl);
+  const handleTaskClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setTaskAnchorEl(event.currentTarget);
+  };
+  const handleTaskClose = () => {
+    setTaskAnchorEl(null);
   };
 
 
@@ -75,19 +88,12 @@ const Dashboard: React.FC = () => {
                   <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
                     Checklist Title
                   </Typography>
-                  <IconButton sx={{ gridColumn: 3}} onClick={handleClick}><MoreHorizRoundedIcon/></IconButton>
-                  <Menu
-                    id="checklist-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={handleClose}>
-                      <ListItemText disableTypography={false}>
-                        <Typography fontSize="small">Delete Checklist</Typography>
-                      </ListItemText>
-                    </MenuItem>
-                  </Menu>
+                  <IconButton sx={{ gridColumn: 3}} onClick={handleChecklistClick}><MoreHorizRoundedIcon/></IconButton>
+                  <MoreChecklistContextMenu
+                      anchorEl={checklistAnchorEl}
+                      open={openChecklist}
+                      onClose={handleChecklistClose}
+                    />
                   <Typography sx={{ fontSize: '.9em', pb: 3}}>
                     List description
                   </Typography>
@@ -105,7 +111,12 @@ const Dashboard: React.FC = () => {
                       </Typography>
                     </ListItemText>
                     <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
-                    <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
+                    <IconButton size="small" onClick={handleTaskClick}><MoreVertIcon/></IconButton>
+                    <MoreTaskContextMenu
+                      anchorEl={taskAnchorEl}
+                      open={openTask}
+                      onClose={handleTaskClose}
+                    />
                   </ListItem>
                   <ListItem divider={true}>
                     <Tooltip title="mark in progress">
@@ -117,7 +128,7 @@ const Dashboard: React.FC = () => {
                       </Typography>
                     </ListItemText>
                     <Tooltip title="mark complete"><Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small"/></Tooltip>
-                    <Tooltip title="delete"><IconButton size="small"><DeleteOutlineRoundedIcon /></IconButton></Tooltip>
+                    <Tooltip title="more"><IconButton size="small"><MoreVertIcon/></IconButton></Tooltip>
                   </ListItem>
                   <ListItem>
                     <TextField id="filled-basic" label="add task" variant="filled" sx={{ pt: 2, width: "100%"}}/>
