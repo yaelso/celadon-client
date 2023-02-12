@@ -15,6 +15,8 @@ import { ReactComponent as ReactRouter } from './assets/reactrouter.svg';
 import { ReactComponent as TypeScriptIcon } from './assets/typescript.svg';
 import YaelOnTheBeach from './assets/yael.png';
 
+const iconList = [<FirebaseIcon/>, <FlaskIcon/>, <GoogleIcon/>,  <MuiIcon/>,  <PostgresIcon/>, <ReactIcon/>, <ReactRouter/>, <TypeScriptIcon/>]
+
 const Home: React.FC = () => {
   const routes = makeRoutes();
 
@@ -38,7 +40,6 @@ const Home: React.FC = () => {
           flexDirection: "column",
           minHeight: "100vh",
           width: "100vw",
-          // backgroundColor: "lightyellow",
         }}
       >
         <Container
@@ -66,7 +67,6 @@ const Home: React.FC = () => {
             sx={{
               display: "flex",
               flexDirection: "row",
-              // backgroundColor: "pink",
               alignItems: "flex-start",
               p: 4,
             }}
@@ -108,15 +108,18 @@ const Home: React.FC = () => {
               textAlign: 'left',
               p: 2
             }}
+            xs={3}
           >
             <Typography variant="h5" component="h6" gutterBottom>
               {"More Text About Celadon"}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              {"This will be the description section below the above heading"}
+              {"This will be the description section below the above heading! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}
             </Typography>
-            <Button href="https://github.com/yaelso/celadon-client" target="_blank" size="small">Frontend Repository</Button>
-            <Button href="https://github.com/yaelso/CeladonApi" target="_blank" size="small">Backend Repository</Button>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Button href="https://github.com/yaelso/celadon-client" target="_blank" size="small">Frontend Repository</Button>
+              <Button href="https://github.com/yaelso/CeladonApi" target="_blank" size="small">Backend Repository</Button>
+            </Box>
           </Grid>
         </Grid>
         <Grid container
@@ -136,11 +139,12 @@ const Home: React.FC = () => {
               sx={{
               display: "flex",
               flexDirection: "row",
-            }}>
-              <Card>
+            }}
+            >
+              <Card sx={{ width: 300, minWidth: 300 }} >
                 <CardMedia
                   component="img"
-                  height="160"
+                  height="300"
                   image={YaelOnTheBeach}
                   alt="Yael"
                 />
@@ -151,13 +155,16 @@ const Home: React.FC = () => {
                   <Typography variant="body2" gutterBottom>
                     Ada D18
                   </Typography>
-                  <Button href="https://github.com/yaelso" size="small">Github</Button>
-                  <Button href="https://www.linkedin.com/in/yael-echols/" size="small">LinkedIn</Button>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Button href="https://github.com/yaelso" size="small">Github</Button>
+                    <Button href="https://www.linkedin.com/in/yael-echols/" size="small">LinkedIn</Button>
+                  </Box>
                 </CardContent>
               </Card>
               <Box sx={{
                 pl: 4
-              }}>
+              }}
+              >
                 <Typography variant="body1" gutterBottom>
                   This will be some text about me and my background before and leading up to Ada!
                 </Typography>
@@ -166,7 +173,6 @@ const Home: React.FC = () => {
           </Grid>
         <Box
           sx={{
-            // backgroundColor: "lightblue",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -177,30 +183,7 @@ const Home: React.FC = () => {
             {"Powered By"}
           </Typography>
           <Grid container spacing={4} xs={10} justifyContent="center" sx={{ p: 2 }}>
-            <Grid item xs={2} sm={6} md={1}>
-              <FirebaseIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <FlaskIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <GoogleIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <MuiIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <PostgresIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <ReactIcon />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <ReactRouter />
-            </Grid>
-            <Grid item xs={2} sm={6} md={1}>
-              <TypeScriptIcon />
-            </Grid>
+            {iconList.map(icon => <Grid item xs={2} sm={6} md={1}>{icon}</Grid>)}
           </Grid>
         </Box>
         <Box
