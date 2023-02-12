@@ -29,11 +29,12 @@ export type PostTaskParams = PostRequestData;
  */
 
 type PostRequestBody = Omit<PostRequestData, 'checklist_id'>;
+type PostResponseBody = { task: Task; };
 
 export const postTask = (jwt: string, requestData: PostRequestData) => {
   const { checklist_id, ...requestBody } = requestData;
 
-  return sendApiRequest<PostRequestBody, Task>(
+  return sendApiRequest<PostRequestBody, PostResponseBody>(
     {
       method:  'POST',
       url: API_ROUTES().Tasks,

@@ -48,11 +48,12 @@ export type PostChecklistParams = PostRequestData;
  */
 
 type PostRequestBody = Omit<PostRequestData, 'category_id'>;
+type PostResponseData = { checklist: Checklist; };
 
 export const postChecklist = (jwt: string, requestData: PostRequestData) => {
   const { category_id, ...requestBody } = requestData;
 
-  return sendApiRequest<PostRequestBody, Checklist>(
+  return sendApiRequest<PostRequestBody, PostResponseData>(
     {
       method:  'POST',
       url: API_ROUTES().Checklists,

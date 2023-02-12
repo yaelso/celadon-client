@@ -73,7 +73,7 @@ const Dashboard: React.FC = (props) => {
 
   const postNewCategory = (params: PostCategoryParams) => postCategory(jwt, params)
     .then(res => {
-      setCategories(prev => [res.data].concat(prev));
+      setCategories(prev => [res.data.category].concat(prev));
       snackbar.enqueueSnackbar('Category successfully created!', { variant: 'success' });
     })
     .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
@@ -100,10 +100,10 @@ const Dashboard: React.FC = (props) => {
 
   // Checklist Bits
   // const postNewChecklist = (params: PostChecklistParams) => postChecklist(jwt, params)
-  //   .then(res => setChecklists(prev => {
-  //     [res.data].concat(prev);
+  //   .then(res => {
+  //     setChecklists(prev => [res.data.checklist].concat(prev));
   //     snackbar.enqueueSnackbar('Checklist successfully created!', { variant: 'success' });
-  //   }))
+  //   })
   //   .catch(() => snackbar.enqueueSnackbar('Checklist creation failed!', { variant: 'error' }));
 
   // const handleChecklistClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -134,12 +134,12 @@ const Dashboard: React.FC = (props) => {
   const handleAssignTaskDueDate = () => {}
 
   // Task Bits
-  const postNewTask = (params: PostTaskParams) => postTask(jwt, params)
-    .then(res => setTasks(prev => {
-      [res.data].concat(prev);
-      snackbar.enqueueSnackbar('Task successfully created!', { variant: 'success' });
-    }))
-    .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
+  // const postNewTask = (params: PostTaskParams) => postTask(jwt, params)
+  //   .then(res => {
+  //     setTasks(prev => [res.data.task].concat(prev));
+  //     snackbar.enqueueSnackbar('Task successfully created!', { variant: 'success' });
+  //   })
+  //   .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
 
   const handleTaskClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setTaskAnchorEl(event.currentTarget);
@@ -149,9 +149,9 @@ const Dashboard: React.FC = (props) => {
     setTaskAnchorEl(null);
   };
 
-  const handleCreateTaskSubmit = () => {
-    postNewTask({title: taskTitle ?? '', checklist_id: undefined});
-  };
+  // const handleCreateTaskSubmit = () => {
+  //   postNewTask({title: taskTitle ?? '', checklist_id: undefined});
+  // };
 
 
   useEffect(
