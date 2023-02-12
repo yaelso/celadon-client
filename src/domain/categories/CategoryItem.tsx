@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Divider, Fab, Grid, Tooltip, Typography } from "@mui/material";
+import { Box, Divider, Fab, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { PostChecklistParams, postChecklist } from '../checklists/checklistActions';
 import { Checklist } from '../checklists/models';
 import ChecklistItem from '../checklists/ChecklistItem';
 import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 
 // const makeChecklistComponents = (checklists: Checklist[]) => {
@@ -77,9 +78,12 @@ const CategoryItem: React.FC<Props> = (props) => {
         <Box sx={{
             pb: 10
         }}>
-            <Typography variant="h5" sx={{pt: 5, pb: 1}}>
-                {props.title}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'baseline'}}>
+                <Typography variant="h5" sx={{pt: 5, pb: 1}}>
+                    {props.title}
+                </Typography>
+                <IconButton><DeleteRoundedIcon /></IconButton>
+            </Box>
             <Typography sx={{pb: 2}}>
                 {props.description}
             </Typography>
