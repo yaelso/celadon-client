@@ -11,10 +11,17 @@ import DialogTitle from '@mui/material/DialogTitle';
 type Props = {
     open: boolean;
     onClose: () => void;
+    onClickSubmit: () => void;
+    onChangeTitle: (title: string) => void;
 };
 
 
 const PostTaskFormDialog: React.FC<Props> = props => {
+    const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const titleText = event.target.value;
+        props.onChangeTitle(titleText);
+    }
+
     return (
         <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>Create a Task</DialogTitle>
@@ -30,10 +37,12 @@ const PostTaskFormDialog: React.FC<Props> = props => {
                     type="title"
                     fullWidth
                     variant="standard"
+                    onChange={handleChangeTitle}
+                    required
                 />
             </DialogContent>
             <DialogActions sx={{ pb: 2 }}>
-                <Button variant="contained">Submit</Button>
+                <Button variant="contained" onClick={props.onClickSubmit}>Submit</Button>
                 <Button variant="contained" onClick={props.onClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

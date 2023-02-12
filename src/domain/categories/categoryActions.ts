@@ -13,7 +13,7 @@ export const fetchCategories = (jwt: string) => sendApiRequest<undefined, Catego
   },
 );
 
-type PostRequestData = Pick<Category, 'title' & 'description'>
+type PostRequestData = Pick<Category, 'title' | 'description'>
 export type PostCategoryParams = PostRequestData;
 
 export const postCategory = (jwt: string, requestBody: PostRequestData) => sendApiRequest<PostRequestData, Category>(
