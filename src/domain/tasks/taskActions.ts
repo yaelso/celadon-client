@@ -16,6 +16,21 @@ export const fetchTasks = (jwt: string, checklistId: number) => sendApiRequest<u
   },
 );
 
+type DueDateFetchRequestData = Pick<Task, 'due_date'>;
+export type TaskWithDueDateFetchParams = DueDateFetchRequestData;
+
+export const fetchTasksWithDueDate = (jwt: string, dueDate: DueDateFetchRequestData) => sendApiRequest<undefined, Task[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().Tasks_DueDate,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    params: {
+      "due_date": dueDate,
+    }
+  },
+);
 
 /**
  * The object containing all the data params necessary to complete the POST request...
@@ -48,6 +63,10 @@ export const postTask = (jwt: string, requestData: PostRequestData) => {
     },
   )
 };
+
+// TODO: patch task (in progress/not in progress)
+// TODO: patch task (complete/not complete)
+// TODO: patch task (assign due date/clear due date)
 
 type DeleteResponseBody = {
   details: string;

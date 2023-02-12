@@ -40,24 +40,11 @@ const Dashboard: React.FC = (props) => {
     }))
     .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
 
-  const [categories, setCategories] = useState<Category[] | undefined>(undefined);
   // const [checklists, setChecklists] = useState(undefined);
-  const [tasks, setTasks] = useState(undefined);
+  // const [tasks, setTasks] = useState(undefined);
   const [habits, setHabits] = useState(undefined);
 
   const [jwt, _] = useLocalStorage('authToken');
-
-  // Params for a categories, checklists, and tasks to be posted if user opens POST form
-  const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
-  const [categoryDesc, setCategoryDesc] = useState<string | undefined>();
-
-  // const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
-  // const [checklistDesc, setChecklistDesc] = useState<string | undefined>();
-
-  const [taskTitle, setTaskTitle] = useState<string | undefined>();
-
-  const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
-  const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
 
   // Anchors
   // const [checklistAnchorEl, setChecklistAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -66,7 +53,16 @@ const Dashboard: React.FC = (props) => {
   const [taskAnchorEl, setTaskAnchorEl] = React.useState<null | HTMLElement>(null);
   const openTask = Boolean(taskAnchorEl);
 
-  // Category Bits
+  // region Category Bits
+
+  const [categories, setCategories] = useState<Category[] | undefined>(undefined);
+
+  // Params for a category to be posted, if user opens POST form
+  const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
+  const [categoryDesc, setCategoryDesc] = useState<string | undefined>();
+
+  const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
+
   const fetchAllCategories = () => fetchCategories(jwt)
     .then(res => setCategories(res.data))
     .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' }));
@@ -86,19 +82,28 @@ const Dashboard: React.FC = (props) => {
     .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
 
   const handleCreateCategoryOpen = () => {
-      setCreateCategoryOpen(true);
+    setCreateCategoryOpen(true);
   };
 
   const handleCreateCategoryClose = () => {
-      setCreateCategoryOpen(false);
+    setCreateCategoryOpen(false);
   };
 
   const handleCreateCategorySubmit = () => {
-    postNewCategory({title: categoryTitle ?? '', description: categoryDesc ?? ''});
+    postNewCategory({ title: categoryTitle ?? '', description: categoryDesc ?? '' });
     setCreateCategoryOpen(false);
   }
 
-  // Checklist Bits
+  // endregion
+
+  // region Checklist Bits
+
+  // Params for a checklist to be posted, if user opens POST form
+  const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
+  const [checklistDesc, setChecklistDesc] = useState<string | undefined>();
+
+  const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+
   // const postNewChecklist = (params: PostChecklistParams) => postChecklist(jwt, params)
   //   .then(res => {
   //     setChecklists(prev => [res.data.checklist].concat(prev));
@@ -127,11 +132,19 @@ const Dashboard: React.FC = (props) => {
   //   setCreateChecklistOpen(false);
   // };
 
-  const handleArchiveChecklist = () => {}
-  const handleFavoriteChecklist = () => {}
-  const handleMarkTaskInProgress = () => {}
-  const handleMarkTaskComplete = () => {}
-  const handleAssignTaskDueDate = () => {}
+  const handleArchiveChecklist = () => { }
+  const handleFavoriteChecklist = () => { }
+
+  // endregion
+
+  // region Task Bits
+
+  // Params for a task to be posted, if user opens POST form
+  const [taskTitle, setTaskTitle] = useState<string | undefined>();
+
+  const handleMarkTaskInProgress = () => { }
+  const handleMarkTaskComplete = () => { }
+  const handleAssignTaskDueDate = () => { }
 
   // Task Bits
   // const postNewTask = (params: PostTaskParams) => postTask(jwt, params)
@@ -153,6 +166,7 @@ const Dashboard: React.FC = (props) => {
   //   postNewTask({title: taskTitle ?? '', checklist_id: undefined});
   // };
 
+  // endregion
 
   useEffect(
     () => {
@@ -166,7 +180,7 @@ const Dashboard: React.FC = (props) => {
   return (
     <AppLayout>
       <Box>
-        <Breadcrumbs sx={{pt: 5, pb: 2}}>
+        <Breadcrumbs sx={{ pt: 5, pb: 2 }}>
           <Link underline="hover" color="inherit" href={routes.Root}>
             Home
           </Link>
