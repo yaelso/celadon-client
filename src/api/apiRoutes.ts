@@ -13,7 +13,7 @@ export const API_ROUTES = () => {
         Checklists_Unfavorite:   (id: number) => `${apiRoot}/checklists/${id}/unfavorite`,
         Checklists_Delete:       (id: number) => `${apiRoot}/checklists/${id}`,
         Tasks:                   `${apiRoot}/tasks`,
-        Tasks_DueDate:           `${apiRoot}/tasks/due_date`,
+        Tasks_DueDate:           `${apiRoot}/tasks/for_due_date`,
         Tasks_MarkComplete:      (id: number) => `${apiRoot}/tasks/${id}/mark_complete`,
         Tasks_MarkIncomplete:    (id: number) => `${apiRoot}/tasks/${id}/mark_incomplete`,
         Tasks_MarkInProgress:    (id: number) => `${apiRoot}/tasks/${id}/mark_in_progress`,
