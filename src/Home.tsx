@@ -115,6 +115,8 @@ const Home: React.FC = () => {
             <Typography variant="body2" gutterBottom>
               {"This will be the description section below the above heading"}
             </Typography>
+            <Button href="https://github.com/yaelso/celadon-client" target="_blank" size="small">Frontend Repository</Button>
+            <Button href="https://github.com/yaelso/CeladonApi" target="_blank" size="small">Backend Repository</Button>
           </Grid>
         </Grid>
         <Grid container
@@ -149,8 +151,8 @@ const Home: React.FC = () => {
                   <Typography variant="body2" gutterBottom>
                     Ada D18
                   </Typography>
-                  <Button size="small">Github</Button>
-                  <Button size="small">LinkedIn</Button>
+                  <Button href="https://github.com/yaelso" size="small">Github</Button>
+                  <Button href="https://www.linkedin.com/in/yael-echols/" size="small">LinkedIn</Button>
                 </CardContent>
               </Card>
               <Box sx={{
