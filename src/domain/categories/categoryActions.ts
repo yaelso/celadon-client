@@ -1,6 +1,6 @@
 import { Category } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
-import { sendApiRequest } from '../../api/types';
+import { sendApiRequest } from '../../api/module';
 
 
 export const fetchCategories = (jwt: string) => sendApiRequest<undefined, Category[]>(

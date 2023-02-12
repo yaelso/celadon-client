@@ -1,6 +1,6 @@
 import { UserPokemon } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
-import { sendApiRequest } from '../../api/types';
+import { sendApiRequest } from '../../api/module';
 
 
 export const fetchUserPokemon = (jwt: string) => sendApiRequest<undefined, UserPokemon[]>(
