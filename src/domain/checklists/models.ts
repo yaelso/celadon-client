@@ -1,3 +1,5 @@
+import { Task } from "../tasks/models";
+
 export type Checklist = {
     id: number;
     title: string;
@@ -5,4 +7,5 @@ export type Checklist = {
     category_id: number;
     is_archived: boolean;
     is_favorited: boolean;
+    task: Task[];
 }

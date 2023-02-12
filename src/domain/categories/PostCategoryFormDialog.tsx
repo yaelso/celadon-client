@@ -11,10 +11,23 @@ import DialogTitle from '@mui/material/DialogTitle';
 type Props = {
     open: boolean;
     onClose: () => void;
+    onClickSubmit: () => void;
+    onChangeTitle: (title: string) => void;
+    onChangeDesc: (desc: string) => void;
 };
 
 
 const PostCategoryFormDialog: React.FC<Props> = props => {
+    const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const titleText = event.target.value;
+        props.onChangeTitle(titleText);
+    }
+
+    const handleChangeDesc= (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const descText = event.target.value;
+        props.onChangeDesc(descText);
+    }
+
     return (
         <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>Create a Category</DialogTitle>
@@ -30,6 +43,8 @@ const PostCategoryFormDialog: React.FC<Props> = props => {
                     type="title"
                     fullWidth
                     variant="standard"
+                    onChange={handleChangeTitle}
+                    required
                 />
                 <TextField
                     autoFocus
@@ -39,10 +54,12 @@ const PostCategoryFormDialog: React.FC<Props> = props => {
                     type="description"
                     fullWidth
                     variant="standard"
+                    onChange={handleChangeDesc}
+                    required
                 />
             </DialogContent>
             <DialogActions sx={{ pb: 2 }}>
-                <Button variant="contained">Submit</Button>
+                <Button variant="contained" onClick={props.onClickSubmit}>Submit</Button>
                 <Button variant="contained" onClick={props.onClose}>Cancel</Button>
             </DialogActions>
         </Dialog>

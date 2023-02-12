@@ -1,6 +1,9 @@
-import { Box, Breadcrumbs, Card, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useLocalStorage } from '../applicationState/hooks';
+import { fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 
@@ -14,6 +17,17 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Pokedex: React.FC = () => {
   const routes = makeRoutes();
+
+  const snackbar = useSnackbar();
+
+  const [userPokemon, setUserPokemon] = useState(undefined);
+
+  const [jwt, _] = useLocalStorage('authToken');
+
+  // API callbacks
+  const fetchAllUserPokemon = () => fetchUserPokemon(jwt)
+    .then(data => setUserPokemon(data))
+    .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
 
   return (
     <AppLayout>

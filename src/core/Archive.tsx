@@ -1,14 +1,26 @@
-import { Box, Breadcrumbs, Button, Checkbox, Divider, Grid, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography } from '@mui/material';
-import React from 'react';
-import AppLayout from '../layout/AppLayout';
-import { makeRoutes } from '../navigation/routes';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import { Box, Breadcrumbs, Button, Checkbox, Grid, IconButton, Link, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { useLocalStorage } from '../applicationState/hooks';
+import { fetchArchivedChecklists } from '../domain/checklists/checklistActions';
+import AppLayout from '../layout/AppLayout';
+import { makeRoutes } from '../navigation/routes';
 
 const Archive: React.FC = () => {
+  const snackbar = useSnackbar();
+
+  const [archivedChecklists, setArchivedChecklists] = useState(undefined);
+
+  const [jwt, _] = useLocalStorage('authToken');
+
+  // API callbacks
+  const fetchAllArchivedChecklists = () => fetchArchivedChecklists(jwt)
+    .then(data => setArchivedChecklists(data))
+    .catch(() => snackbar.enqueueSnackbar('Archive fetch failed!', { variant: 'error' }));
+
   const routes = makeRoutes();
 
   return (
