@@ -93,7 +93,8 @@ const Profile: React.FC = () => {
         </Typography>
         {!!habits?.length ? (habits.map((habit) => (
           <HabitItem
-              title={habit.title}
+            key={`habit-${habit.id}`}
+            title={habit.title}
           />
         ))) : "No current habits!"}
       </Box>
@@ -101,6 +102,13 @@ const Profile: React.FC = () => {
         <Typography>
           {"Schedule"}
         </Typography>
+        {/* {!!favoriteChecklists?.length ? (favoriteChecklists.map((checklist) => (
+          <FavoritedChecklistItem
+              title={checklist.title}
+              description={checklist.description}
+              tasks={checklist.tasks}
+          />
+          ))) : "No currently scheduled tasks!"} */}
       </Box>
       <Box>
         <Typography>
@@ -118,6 +126,7 @@ const Profile: React.FC = () => {
         </Typography>
         {!!favoriteChecklists?.length ? (favoriteChecklists.map((checklist) => (
           <FavoritedChecklistItem
+              key={`favchecklist-${checklist.id}`}
               title={checklist.title}
               description={checklist.description}
               tasks={checklist.tasks}

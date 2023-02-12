@@ -177,6 +177,7 @@ const Dashboard: React.FC = (props) => {
       <PostCategoryFormDialog open={createCategoryOpen} onClose={handleCreateCategoryClose} onClickSubmit={handleCreateCategorySubmit} onChangeTitle={setCategoryTitle} onChangeDesc={setCategoryDesc} />
       {!!categories?.length ? (categories.map((category) => (
         <CategoryItem
+          key={`category-${category.id}`}
           title={category.title}
           description={category.description}
           checklists={category.checklists}

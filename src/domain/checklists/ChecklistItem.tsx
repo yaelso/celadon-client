@@ -48,6 +48,7 @@ const ChecklistItem: React.FC<Props> = (props) => {
                 >
                     {props.tasks ? (props.tasks.map((task) => (
                         <TaskItem
+                            key={`task-${task.id}`}
                             title={task.title}
                         />
                     ))) : "No current tasks!"}

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import { Box, Divider, Fab, Grid, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { PostChecklistParams, postChecklist } from '../checklists/checklistActions';
 import { Checklist } from '../checklists/models';
 import ChecklistItem from '../checklists/ChecklistItem';
+import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
+import AddIcon from '@mui/icons-material/Add';
+
 
 // const makeChecklistComponents = (checklists: Checklist[]) => {
 //     checklists.map(c => <Checklists />);
@@ -82,13 +85,23 @@ const CategoryItem: React.FC<Props> = (props) => {
             </Typography>
             <Divider />
             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
-                {props.checklists ? (props.checklists.map((checklist) => (
+                {!!props.checklists?.length ? (props.checklists.map((checklist) => (
                     <ChecklistItem
+                        key={`checklist-${checklist.id}`}
                         title={checklist.title}
                         description={checklist.description}
                         tasks={checklist.tasks}
                     />
                 ))) : "No current checklists!"}
+            </Grid>
+            <Grid item>
+                <Tooltip title="Add checklist">
+                    {/* <Fab color="primary" onClick={handleCreateChecklistOpen}> */}
+                    <Fab color="primary">
+                        <AddIcon />
+                    </Fab>
+                </Tooltip>
+                {/* <PostChecklistFormDialog open={createChecklistOpen} onClose={handleCreateChecklistClose} onClickSubmit={handleCreateChecklistSubmit} onChangeTitle={setChecklistTitle} onChangeDesc={setCategoryDesc} /> */}
             </Grid>
         </Box>
     );
