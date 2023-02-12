@@ -23,15 +23,24 @@ import MoreTaskContextMenu from '../domain/tasks/MoreTaskContextMenu';
 import { postTask, PostTaskParams } from '../domain/tasks/taskActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
-import axios from 'axios';
 import CategoryItem from '../domain/categories/CategoryItem';
+import { postUser } from '../domain/users/userActions';
 
 
 const Dashboard: React.FC = (props) => {
   const routes = makeRoutes();
   const snackbar = useSnackbar();
 
-  const [categories, setCategories] = useState(undefined);
+  const [user, setUser] = useState(undefined);
+
+  const postNewUser = () => postUser(jwt)
+    .then(res => setUser(prev => {
+      [res.data].concat(prev);
+      snackbar.enqueueSnackbar('User successfully created!', { variant: 'success' });
+    }))
+    .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
+
+  const [categories, setCategories] = useState<Category[] | undefined>(undefined);
   // const [checklists, setChecklists] = useState(undefined);
   const [tasks, setTasks] = useState(undefined);
   const [habits, setHabits] = useState(undefined);
@@ -63,10 +72,10 @@ const Dashboard: React.FC = (props) => {
     .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' }));
 
   const postNewCategory = (params: PostCategoryParams) => postCategory(jwt, params)
-    .then(res => setCategories(prev => {
-      [res.data].concat(prev);
+    .then(res => {
+      setCategories(prev => [res.data].concat(prev));
       snackbar.enqueueSnackbar('Category successfully created!', { variant: 'success' });
-    }))
+    })
     .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
 
   const deleteCategoryById = (id: number) => deleteCategory(jwt, id)
@@ -88,10 +97,6 @@ const Dashboard: React.FC = (props) => {
     postNewCategory({title: categoryTitle ?? '', description: categoryDesc ?? ''});
     setCreateCategoryOpen(false);
   }
-
-  // const makeCategoryComponents = (categories: Category[]) => {
-  //   categories.map(c => <CategoryItem/>);
-  // }
 
   // Checklist Bits
   // const postNewChecklist = (params: PostChecklistParams) => postChecklist(jwt, params)
@@ -170,7 +175,7 @@ const Dashboard: React.FC = (props) => {
       </Box>
       <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={handleCreateCategoryOpen}>Add Category</Button>
       <PostCategoryFormDialog open={createCategoryOpen} onClose={handleCreateCategoryClose} onClickSubmit={handleCreateCategorySubmit} onChangeTitle={setCategoryTitle} onChangeDesc={setCategoryDesc} />
-      {categories ? (categories.map((category) => (
+      {!!categories?.length ? (categories.map((category) => (
         <CategoryItem
           title={category.title}
           description={category.description}

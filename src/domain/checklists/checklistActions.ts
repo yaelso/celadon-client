@@ -26,6 +26,16 @@ export const fetchArchivedChecklists = (jwt: string) => sendApiRequest<undefined
   },
 );
 
+export const fetchFavorites = (jwt: string) => sendApiRequest<undefined, Checklist[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().Checklists_GetFavorites,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  },
+);
+
 /**
  * The object containing all the data params necessary to complete the POST request...
  */

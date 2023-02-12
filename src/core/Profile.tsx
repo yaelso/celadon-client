@@ -2,23 +2,31 @@ import { Box, Breadcrumbs, CssBaseline, Link, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useLocalStorage } from "../applicationState/hooks";
+import { fetchFavorites } from "../domain/checklists/checklistActions";
+import FavoritedChecklistItem from "../domain/checklists/FavoritedChecklistItem";
 import { deleteHabit, fetchHabits, postHabit } from "../domain/habits/habitActions";
+import HabitItem from "../domain/habits/HabitItem";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
 
 const Profile: React.FC = () => {
   const routes = makeRoutes();
-
   const snackbar = useSnackbar();
 
-  // const [habits, setHabits] = useState(undefined);
+  const [jwt, _] = useLocalStorage('authToken');
 
-  // const [jwt, _] = useLocalStorage('authToken');
+  const [habits, setHabits] = useState(undefined);
+  const [favoriteChecklists, setFavoriteChecklists] = useState(undefined);
+
 
   // // API callbacks
   // const fetchAllHabits = () => fetchHabits(jwt)
   //   .then(data => setHabits(data))
   //   .catch(() => snackbar.enqueueSnackbar('Habits fetch failed!', { variant: 'error' }));
+
+  const fetchAllFavorites = () => fetchFavorites(jwt)
+    .then(data => setFavoriteChecklists(data))
+    .catch(() => snackbar.enqueueSnackbar('Favorites fetch failed!', { variant: 'error' }));
 
   // const postNewHabit = () => postHabit(jwt)
   //   .then(data => setHabits(prev => {
@@ -42,6 +50,15 @@ const Profile: React.FC = () => {
   //   },
   //   [],
   // );
+
+  useEffect(
+    () => {
+      if (!favoriteChecklists) {
+        fetchAllFavorites();
+      }
+    },
+    [],
+  );
 
   return (
     <AppLayout>
@@ -74,6 +91,11 @@ const Profile: React.FC = () => {
         <Typography>
           {"Habits"}
         </Typography>
+        {!!habits?.length ? (habits.map((habit) => (
+          <HabitItem
+              title={habit.title}
+          />
+        ))) : "No current habits!"}
       </Box>
       <Box>
         <Typography>
@@ -94,6 +116,13 @@ const Profile: React.FC = () => {
         <Typography>
           {"Favorite Checklists"}
         </Typography>
+        {!!favoriteChecklists?.length ? (favoriteChecklists.map((checklist) => (
+          <FavoritedChecklistItem
+              title={checklist.title}
+              description={checklist.description}
+              tasks={checklist.tasks}
+          />
+          ))) : "No current favorites!"}
       </Box>
     </AppLayout>
   );
