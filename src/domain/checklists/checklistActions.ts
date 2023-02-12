@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Checklist } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
+import { sendApiRequest } from '../../api/types';
 
 
-export const fetchChecklists = (jwt: string) => axios.request<any, Checklist[]>(
+export const fetchChecklists = (jwt: string, categoryId: number) => sendApiRequest<undefined, Checklist[]>(
   {
     method:  'GET',
     url:     API_ROUTES().Checklists,
@@ -11,12 +11,12 @@ export const fetchChecklists = (jwt: string) => axios.request<any, Checklist[]>(
       'Authorization': `Bearer ${jwt}`,
     },
     params: {
-
+      "category_id": categoryId,
     }
   },
 );
 
-export const fetchArchivedChecklists = (jwt: string) => axios.request<any, Checklist[]>(
+export const fetchArchivedChecklists = (jwt: string) => sendApiRequest<undefined, Checklist[]>(
   {
     method:  'GET',
     url:     API_ROUTES().Checklists_GetArchived,
@@ -26,24 +26,42 @@ export const fetchArchivedChecklists = (jwt: string) => axios.request<any, Check
   },
 );
 
-export const postChecklist = (jwt: string) => axios.request<any, Checklist>(
-  {
-    method:  'POST',
-    url: API_ROUTES().Checklists,
-    headers: {
-      'Authorization': `Bearer ${jwt}`,
-    },
-    params: {
+/**
+ * The object containing all the data params necessary to complete the POST request...
+ */
 
+type PostRequestData = Pick<Checklist, 'title' | 'description' | 'category_id'>;
+export type PostChecklistParams = PostRequestData;
+
+/**
+ * ...and just the part that's going into the JSON body
+ */
+
+type PostRequestBody = Omit<PostRequestData, 'category_id'>;
+
+export const postChecklist = (jwt: string, requestData: PostRequestData) => {
+  const { category_id, ...requestBody } = requestData;
+
+  return sendApiRequest<PostRequestBody, Checklist>(
+    {
+      method:  'POST',
+      url: API_ROUTES().Checklists,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+      },
+      data: requestBody,
+      params: {
+        "category_id": category_id,
+      },
     }
-  },
-);
+  );
+};
 
-type DeletePayload = {
+type DeleteResponseBody = {
   details: string;
 }
 
-export const deleteChecklist = (jwt: string, id: number) => axios.request<any, DeletePayload>(
+export const deleteChecklist = (jwt: string, id: number) => sendApiRequest<undefined, DeleteResponseBody>(
   {
     method: 'DELETE',
     url: API_ROUTES().Checklists_Delete(id),

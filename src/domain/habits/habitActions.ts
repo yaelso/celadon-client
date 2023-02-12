@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Habit } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
+import { sendApiRequest } from '../../api/types';
 
 
-export const fetchHabits = (jwt: string) => axios.request<any, Habit[]>(
+export const fetchHabits = (jwt: string) => sendApiRequest<undefined, Habit[]>(
   {
     method:  'GET',
     url:     API_ROUTES().Habits,
@@ -13,21 +13,25 @@ export const fetchHabits = (jwt: string) => axios.request<any, Habit[]>(
   },
 );
 
-export const postHabit = (jwt: string) => axios.request<any, Habit>(
+type PostRequestData = Pick<Habit, 'title'>;
+export type PostHabitParams = PostRequestData;
+
+export const postHabit = (jwt: string, requestBody: PostRequestData) => sendApiRequest<PostRequestData, Habit>(
   {
     method:  'POST',
     url: API_ROUTES().Habits,
     headers: {
       'Authorization': `Bearer ${jwt}`,
     },
+    data: requestBody
   },
 );
 
-type DeletePayload = {
+type DeleteResponseBody = {
   details: string;
 }
 
-export const deleteHabit = (jwt: string, id: number) => axios.request<any, DeletePayload>(
+export const deleteHabit = (jwt: string, id: number) => sendApiRequest<undefined, DeleteResponseBody>(
   {
     method: 'DELETE',
     url: API_ROUTES().Habits_Delete(id),

@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Category } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
+import { sendApiRequest } from '../../api/types';
 
 
-export const fetchCategories = (jwt: string) => axios.request<any, Category[]>(
+export const fetchCategories = (jwt: string) => sendApiRequest<undefined, Category[]>(
   {
     method:  'GET',
     url:     API_ROUTES().Categories,
@@ -13,21 +13,25 @@ export const fetchCategories = (jwt: string) => axios.request<any, Category[]>(
   },
 );
 
-export const postCategory = (jwt: string) => axios.request<any, Category>(
+type PostRequestData = Pick<Category, 'title' & 'description'>
+export type PostCategoryParams = PostRequestData;
+
+export const postCategory = (jwt: string, requestBody: PostRequestData) => sendApiRequest<PostRequestData, Category>(
   {
     method:  'POST',
     url: API_ROUTES().Categories,
     headers: {
       'Authorization': `Bearer ${jwt}`,
     },
+    data: requestBody,
   },
 );
 
-type DeletePayload = {
+type DeleteResponseBody = {
   details: string;
 }
 
-export const deleteCategory = (jwt: string, id: number) => axios.request<any, DeletePayload>(
+export const deleteCategory = (jwt: string, id: number) => sendApiRequest<undefined, DeleteResponseBody>(
   {
     method: 'DELETE',
     url: API_ROUTES().Categories_Delete(id),
