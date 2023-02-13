@@ -64,9 +64,73 @@ export const postTask = (jwt: string, requestData: PostRequestData) => {
   )
 };
 
-// TODO: patch task (in progress/not in progress)
-// TODO: patch task (complete/not complete)
-// TODO: patch task (assign due date/clear due date)
+type PatchResponseBody = {
+  task: Task;
+}
+
+export const markTaskInProgress = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkInProgress(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskNotInProgress = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkNotInProgress(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskComplete = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkComplete(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskIncomplete = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkIncomplete(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+type PatchDueDateRequestData = Pick<Task, 'due_date'>;
+export type PatchDueDateRequestParams = PatchDueDateRequestData;
+
+export const setTaskDueDate = (jwt: string, id: number, requestData: PatchDueDateRequestData) => sendApiRequest<PatchDueDateRequestData, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_SetDueDate(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    data: requestData,
+  }
+)
+
+export const clearTaskDueDate = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_ClearDueDate(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
 
 type DeleteResponseBody = {
   details: string;
