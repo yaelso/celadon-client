@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, Breadcrumbs, Button, Checkbox, Divider, Fab, Grid, IconButton, Link, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip/Tooltip';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
 import Categories from '../domain/categories/CategoryItem';
 import { deleteCategory, fetchCategories, postCategory, PostCategoryParams } from '../domain/categories/categoryActions';
@@ -25,13 +25,19 @@ import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 import CategoryItem from '../domain/categories/CategoryItem';
 import { postUser } from '../domain/users/userActions';
+import { Task } from '../domain/tasks/models';
 
+
+type FlatCategory = Omit<Category, 'checklists'>;
+type FlatChecklist = Omit<Checklist, 'tasks'>;
 
 const Dashboard: React.FC = (props) => {
   const routes = makeRoutes();
   const snackbar = useSnackbar();
 
   const [user, setUser] = useState(undefined);
+
+  const [jwt, _] = useLocalStorage('authToken');
 
   const postNewUser = () => postUser(jwt)
     .then(res => setUser(prev => {
@@ -40,43 +46,93 @@ const Dashboard: React.FC = (props) => {
     }))
     .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
 
-  // const [checklists, setChecklists] = useState(undefined);
-  // const [tasks, setTasks] = useState(undefined);
-  const [habits, setHabits] = useState(undefined);
+  const [categories, setCategories] = useState<FlatCategory[] | undefined>(undefined);
+  const [checklists, setChecklists] = useState<FlatChecklist[] | undefined>(undefined);
+  const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
 
-  const [jwt, _] = useLocalStorage('authToken');
-
-  // Anchors
-  // const [checklistAnchorEl, setChecklistAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const openChecklist = Boolean(checklistAnchorEl);
-
-  const [taskAnchorEl, setTaskAnchorEl] = React.useState<null | HTMLElement>(null);
-  const openTask = Boolean(taskAnchorEl);
-
-  // region Category Bits
-
-  const [categories, setCategories] = useState<Category[] | undefined>(undefined);
-
-  // Params for a category to be posted, if user opens POST form
+  // Params for a category to be posted if user opens POST form
   const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
   const [categoryDesc, setCategoryDesc] = useState<string | undefined>();
 
   const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
 
+  const tasksByChecklistId = useMemo(
+    () => (tasks ?? []).reduce(
+      (acc, task) => {
+        const tasksForChecklist = acc[`${task.checklist_id}`] ?? [];
+        return { ...acc, [`${task.checklist_id}`]: tasksForChecklist.concat([task]) };
+      },
+      {},
+    ), [tasks],
+  );
+
+  const checklistsByCategoryId = useMemo(
+    () => (checklists ?? []).reduce(
+      (acc, checklist) => {
+        const checklistsForCategory = acc[`${checklist.category_id}`] ?? [];
+        return {
+          ...acc,
+          [`${checklist.category_id}`]: checklistsForCategory.concat([
+            {
+              ...checklist,
+              tasks: (tasksByChecklistId[`${checklist.id}`] ?? []),
+            },
+          ]),
+        };
+      },
+      {},
+    ),
+    [checklists, tasksByChecklistId],
+  );
+
+  const fullCategoryObjs = useMemo(
+    () => (categories ?? []).reduce(
+      (acc, category) => acc.concat([{ ...category, checklists: (checklistsByCategoryId[`${category.id}`] ?? []) }]),
+      [],
+    ), [categories, checklistsByCategoryId]
+  )
+
+  // region Category API calls
+
   const fetchAllCategories = () => fetchCategories(jwt)
-    .then(res => setCategories(res.data))
+    .then(res => {
+      const categories = res.data ?? [];
+
+      const flatCategories: FlatCategory[] = categories.map(category => {
+        const { checklists, ...flatCategory } = category;
+        return flatCategory;
+      });
+
+      setCategories(flatCategories);
+
+      const checklists = categories.map(category => category.checklists ?? []).flat();
+      const flatChecklists = checklists.map(
+        checklist => {
+          const { tasks, ...flatChecklist } = checklist;
+          return flatChecklist;
+        })
+
+      setChecklists(flatChecklists);
+
+      const tasks = checklists.map(checklist => checklist.tasks ?? []).flat();
+
+      // Let's never, ever do that again
+      setTasks(tasks);
+    })
     .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' }));
 
   const postNewCategory = (params: PostCategoryParams) => postCategory(jwt, params)
     .then(res => {
-      setCategories(prev => [res.data.category].concat(prev));
+      const category = res.data.category;
+      const { checklists, ...flatCategory } = category;
+
+      setCategories(prev => [flatCategory].concat(prev));
       snackbar.enqueueSnackbar('Category successfully created!', { variant: 'success' });
     })
     .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
 
   const deleteCategoryById = (id: number) => deleteCategory(jwt, id)
     .then(res => {
-      console.log(res.data);
       snackbar.enqueueSnackbar('Category deleted', { variant: 'success' });
     })
     .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
@@ -94,79 +150,16 @@ const Dashboard: React.FC = (props) => {
     setCreateCategoryOpen(false);
   }
 
-  // endregion
+  // end region
 
-  // region Checklist Bits
+  // region Checklist API calls
 
-  // Params for a checklist to be posted, if user opens POST form
-  const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
-  const [checklistDesc, setChecklistDesc] = useState<string | undefined>();
+  // end region
 
-  const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+  // region Task API calls
 
-  // const postNewChecklist = (params: PostChecklistParams) => postChecklist(jwt, params)
-  //   .then(res => {
-  //     setChecklists(prev => [res.data.checklist].concat(prev));
-  //     snackbar.enqueueSnackbar('Checklist successfully created!', { variant: 'success' });
-  //   })
-  //   .catch(() => snackbar.enqueueSnackbar('Checklist creation failed!', { variant: 'error' }));
+  // end region
 
-  // const handleChecklistClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //     setChecklistAnchorEl(event.currentTarget);
-  // };
-
-  // const handleChecklistClose = () => {
-  //     setChecklistAnchorEl(null);
-  // };
-
-  // const handleCreateChecklistOpen = () => {
-  //   setCreateChecklistOpen(true);
-  // };
-
-  // const handleCreateChecklistClose = () => {
-  //   setCreateChecklistOpen(false);
-  // };
-
-  // const handleCreateChecklistSubmit = () => {
-  //   postNewChecklist({title: checklistTitle ?? '', description: checklistDesc ?? '', category_id: undefined});
-  //   setCreateChecklistOpen(false);
-  // };
-
-  const handleArchiveChecklist = () => { }
-  const handleFavoriteChecklist = () => { }
-
-  // endregion
-
-  // region Task Bits
-
-  // Params for a task to be posted, if user opens POST form
-  const [taskTitle, setTaskTitle] = useState<string | undefined>();
-
-  const handleMarkTaskInProgress = () => { }
-  const handleMarkTaskComplete = () => { }
-  const handleAssignTaskDueDate = () => { }
-
-  // Task Bits
-  // const postNewTask = (params: PostTaskParams) => postTask(jwt, params)
-  //   .then(res => {
-  //     setTasks(prev => [res.data.task].concat(prev));
-  //     snackbar.enqueueSnackbar('Task successfully created!', { variant: 'success' });
-  //   })
-  //   .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
-
-  const handleTaskClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setTaskAnchorEl(event.currentTarget);
-  };
-
-  const handleTaskClose = () => {
-    setTaskAnchorEl(null);
-  };
-
-  // const handleCreateTaskSubmit = () => {
-  //   postNewTask({title: taskTitle ?? '', checklist_id: undefined});
-  // };
-
-  // endregion
 
   useEffect(
     () => {
@@ -189,7 +182,7 @@ const Dashboard: React.FC = (props) => {
       </Box>
       <Button variant="contained" startIcon={<AddRoundedIcon />} onClick={handleCreateCategoryOpen}>Add Category</Button>
       <PostCategoryFormDialog open={createCategoryOpen} onClose={handleCreateCategoryClose} onClickSubmit={handleCreateCategorySubmit} onChangeTitle={setCategoryTitle} onChangeDesc={setCategoryDesc} />
-      {!!categories?.length ? (categories.map((category) => (
+      {!!fullCategoryObjs.length ? (fullCategoryObjs.map((category) => (
         <CategoryItem
           key={`category-${category.id}`}
           title={category.title}
