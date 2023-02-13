@@ -15,7 +15,7 @@ import { COLORS } from '../themes/colors';
 import { signOutOfCeladon } from '../firebase';
 
 
-interface Props extends React.PropsWithChildren {}
+interface Props extends React.PropsWithChildren { }
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -79,7 +79,7 @@ const AppLayout: React.FC<Props> = props => {
   return (
     <ThemeProvider theme={theme}>
       <AppNavbar>
-        <Toolbar sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
           <IconButton
             size='large'
             edge='start'
@@ -108,10 +108,9 @@ const AppLayout: React.FC<Props> = props => {
             <IconButton
               size='large'
               color='inherit'
+              onClick={() => alert('No new notifications!')}
             >
-              <Badge badgeContent={13} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+              <NotificationsIcon />
             </IconButton>
             <IconButton
               size='large'
@@ -161,9 +160,9 @@ const AppLayout: React.FC<Props> = props => {
                 }
               }}
             >
-              <MenuItem onClick={handleClose}><Avatar alt={localStorage.getItem("name")} src={localStorage.getItem("profilePic")}/><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
+              <MenuItem onClick={handleClose}><Avatar alt={localStorage.getItem("name")} src={localStorage.getItem("profilePic")} /><Link to={routes.Profile} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }}>Profile</Link></MenuItem>
               <Divider />
-              <MenuItem onClick={handleClose}><Logout sx={{marginRight: 1}}/><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }} onClick={signOutOfCeladon}>Signout</Link></MenuItem>
+              <MenuItem onClick={handleClose}><Logout sx={{ marginRight: 1 }} /><Link to={routes.Root} style={{ color: COLORS.GREY_TEXT, textDecoration: 'none' }} onClick={signOutOfCeladon}>Signout</Link></MenuItem>
             </Menu>
           </Box>
         </Toolbar>
