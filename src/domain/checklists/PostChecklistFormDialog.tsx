@@ -18,14 +18,14 @@ type Props = {
 
 
 const PostChecklistFormDialog: React.FC<Props> = props => {
-    const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChangeTitle = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const titleText = event.target.value;
         props.onChangeTitle(titleText);
     }
 
-    const handleChangeDesc= (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChangeDesc = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const descText = event.target.value;
-        props.onChangeTitle(descText);
+        props.onChangeDesc(descText);
     }
 
     return (
@@ -43,7 +43,7 @@ const PostChecklistFormDialog: React.FC<Props> = props => {
                     type="title"
                     fullWidth
                     variant="standard"
-                    onChange={handleChangeTitle}
+                    onBlur={handleChangeTitle}
                     required
                 />
                 <TextField
@@ -54,7 +54,7 @@ const PostChecklistFormDialog: React.FC<Props> = props => {
                     type="description"
                     fullWidth
                     variant="standard"
-                    onChange={handleChangeDesc}
+                    onBlur={handleChangeDesc}
                 />
             </DialogContent>
             <DialogActions sx={{ pb: 2 }}>
