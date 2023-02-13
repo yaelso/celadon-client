@@ -35,6 +35,7 @@ export const signInWithGoogle = () => {
             console.log(result);
 
             const user = result.user;
+            // const credential = GoogleAuthProvider.credentialFromResult(result);
             const name = user.displayName;
             const email = user.email;
             const profilePic = user.photoURL;
@@ -50,6 +51,8 @@ export const signInWithGoogle = () => {
             console.log(e);
     });
 };
+
+// if user,
 
 export const signOutOfCeladon = () => {
     signOut(auth)
