@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, Breadcrumbs, Button, Checkbox, Divider, Fab, Grid, IconButton, Link, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip/Tooltip';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
 import Categories from '../domain/categories/CategoryItem';
 import { deleteCategory, fetchCategories, postCategory, PostCategoryParams } from '../domain/categories/categoryActions';
@@ -54,7 +54,9 @@ const Dashboard: React.FC = (props) => {
   const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
   const [categoryDesc, setCategoryDesc] = useState<string | undefined>();
 
+  // Post category form dialog toggle
   const [createCategoryOpen, setCreateCategoryOpen] = useState(false);
+  const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
 
   const tasksByChecklistId = useMemo(
     () => (tasks ?? []).reduce(
@@ -90,36 +92,39 @@ const Dashboard: React.FC = (props) => {
       (acc, category) => acc.concat([{ ...category, checklists: (checklistsByCategoryId[`${category.id}`] ?? []) }]),
       [],
     ), [categories, checklistsByCategoryId]
-  )
+  );
 
-  // region Category API calls
+  // region Category API calls & handlers
 
-  const fetchAllCategories = () => fetchCategories(jwt)
-    .then(res => {
-      const categories = res.data ?? [];
+  const fetchAllCategories = useCallback(
+    () => fetchCategories(jwt)
+      .then(res => {
+        const categories = res.data ?? [];
 
-      const flatCategories: FlatCategory[] = categories.map(category => {
-        const { checklists, ...flatCategory } = category;
-        return flatCategory;
-      });
+        const flatCategories: FlatCategory[] = categories.map(category => {
+          const { checklists, ...flatCategory } = category;
+          return flatCategory;
+        });
 
-      setCategories(flatCategories);
+        setCategories(flatCategories);
 
-      const checklists = categories.map(category => category.checklists ?? []).flat();
-      const flatChecklists = checklists.map(
-        checklist => {
-          const { tasks, ...flatChecklist } = checklist;
-          return flatChecklist;
-        })
+        const checklists = categories.map(category => category.checklists ?? []).flat();
+        const flatChecklists = checklists.map(
+          checklist => {
+            const { tasks, ...flatChecklist } = checklist;
+            return flatChecklist;
+          })
 
-      setChecklists(flatChecklists);
+        setChecklists(flatChecklists);
 
-      const tasks = checklists.map(checklist => checklist.tasks ?? []).flat();
+        const tasks = checklists.map(checklist => checklist.tasks ?? []).flat();
 
-      // Let's never, ever do that again
-      setTasks(tasks);
-    })
-    .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' }));
+        // Let's never, ever do that again
+        setTasks(tasks);
+      })
+      .catch(() => snackbar.enqueueSnackbar('Categories fetch failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
 
   const postNewCategory = (params: PostCategoryParams) => postCategory(jwt, params)
     .then(res => {
@@ -150,9 +155,29 @@ const Dashboard: React.FC = (props) => {
     setCreateCategoryOpen(false);
   }
 
+  const handleDeleteCategoryClick = (id: number) => {
+    deleteCategoryById(id)
+    fetchAllCategories()
+  }
+
   // end region
 
-  // region Checklist API calls
+  // region Checklist API calls & handlers
+  const postNewChecklist = useCallback(
+    (params: PostChecklistParams) => {
+      postChecklist(jwt, params)
+        .then(res => {
+          const checklist = res.data.checklist;
+          const { tasks, ...flatChecklist } = checklist;
+
+          setChecklists(prev => [flatChecklist].concat(prev));
+          snackbar.enqueueSnackbar('Checklist successfully created!', { variant: 'success' });
+        })
+        .catch(() => snackbar.enqueueSnackbar('Checklist creation failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
 
   // end region
 
@@ -167,7 +192,7 @@ const Dashboard: React.FC = (props) => {
         fetchAllCategories();
       }
     },
-    [],
+    [categories, fetchAllCategories],
   );
 
   return (
@@ -185,9 +210,11 @@ const Dashboard: React.FC = (props) => {
       {!!fullCategoryObjs.length ? (fullCategoryObjs.map((category) => (
         <CategoryItem
           key={`category-${category.id}`}
+          id={category.id}
           title={category.title}
           description={category.description}
           checklists={category.checklists}
+          addChecklist={postNewChecklist}
         />
       ))) : <Box sx={{ justifyContent: 'center' }}><Typography sx={{ textAlign: 'center' }}>No current categories! Please make a context category to house your lists</Typography></Box>}
     </AppLayout>

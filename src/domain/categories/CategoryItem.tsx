@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Box, Divider, Fab, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { PostChecklistParams, postChecklist } from '../checklists/checklistActions';
@@ -7,88 +7,65 @@ import ChecklistItem from '../checklists/ChecklistItem';
 import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-
-
-// const makeChecklistComponents = (checklists: Checklist[]) => {
-//     checklists.map(c => <Checklists />);
-//   }
-
-//   const makeTaskComponents = (tasks: Task[]) => {
-//     tasks.map(c => <Tasks />);
-//   }
-
-// const makeChecklistComponents = (checklists: Checklist[]) => {
-//     checklists.map(c =>
-//     <Checklist
-//         anchorEl={checklistAnchorEl}
-//         open={openChecklist}
-//         onClose={handleChecklistClose}
-//     />);
-// }
+import { useLocalStorage } from '../../applicationState/hooks';
 
 type Props = {
+    id: number;
     title: string;
     description: string;
     checklists: Checklist[];
+    addChecklist: (params: PostChecklistParams) => void;
 };
 
 const CategoryItem: React.FC<Props> = (props) => {
-    // const snackbar = useSnackbar();
+    const { id, addChecklist } = props;
 
-    // const [checklists, setChecklists] = useState(undefined);
+    // Params for a checklist to be posted if user opens POST form
+    const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
+    const [checklistDesc, setChecklistDesc] = useState<string | undefined>();
 
-    // const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
-    // const [checklistDesc, setChecklistDesc] = useState<string | undefined>();
+    // Post checklist form dialog toggle
+    const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
 
-    // const [createChecklistOpen, setCreateChecklistOpen] = useState(false);
+    const [checklistAnchorEl, setChecklistAnchorEl] = React.useState<null | HTMLElement>(null);
+    const openChecklist = Boolean(checklistAnchorEl);
 
-    // const [checklistAnchorEl, setChecklistAnchorEl] = React.useState<null | HTMLElement>(null);
-    // const openChecklist = Boolean(checklistAnchorEl);
+    const handleCreateChecklistOpen = useCallback(
+        () => {
+            setCreateChecklistOpen(true);
+        },
+        [setCreateChecklistOpen],
+    );
 
-    // Checklist Bits
-    // const postNewChecklist = (params: PostChecklistParams) => postChecklist(jwt, params)
-    //     .then(res => setChecklists(prev => {
-    //         [res.data].concat(prev);
-    //         snackbar.enqueueSnackbar('Checklist successfully created!', { variant: 'success' });
-    //     }))
-    //     .catch(() => snackbar.enqueueSnackbar('Checklist creation failed!', { variant: 'error' }));
+    const handleCreateChecklistClose = useCallback(() => {
+        setCreateChecklistOpen(false);
+    },
+        [setCreateChecklistOpen],
+    );
 
-    // const handleChecklistClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //     setChecklistAnchorEl(event.currentTarget);
-    // };
-
-    // const handleChecklistClose = () => {
-    //     setChecklistAnchorEl(null);
-    // };
-
-    // const handleCreateChecklistOpen = () => {
-    //     setCreateChecklistOpen(true);
-    // };
-
-    // const handleCreateChecklistClose = () => {
-    //     setCreateChecklistOpen(false);
-    // };
-
-    // const handleCreateChecklistSubmit = () => {
-    // postNewChecklist({title: checklistTitle ?? '', description: checklistDesc ?? '', category_id: undefined});
-    // setCreateChecklistOpen(false);
-    // };
+    const handleCreateChecklistSubmit = useCallback(
+        () => {
+            addChecklist({ title: checklistTitle ?? '', description: checklistDesc ?? '', category_id: id });
+            setCreateChecklistOpen(false);
+        },
+        [addChecklist, checklistDesc, checklistTitle, id, setCreateChecklistOpen],
+    );
 
     return (
         <Box sx={{
             pb: 10
         }}>
-            <Box sx={{ display: 'flex', alignItems: 'baseline'}}>
-                <Typography variant="h5" sx={{pt: 5, pb: 1}}>
+            <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+                <Typography variant="h5" sx={{ pt: 5, pb: 1 }}>
                     {props.title}
                 </Typography>
                 <IconButton><DeleteRoundedIcon /></IconButton>
             </Box>
-            <Typography sx={{pb: 2}}>
+            <Typography sx={{ pb: 2 }}>
                 {props.description}
             </Typography>
             <Divider />
-            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
+            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
                 {!!props.checklists?.length ? (props.checklists.map((checklist) => (
                     <ChecklistItem
                         key={`checklist-${checklist.id}`}
@@ -100,12 +77,17 @@ const CategoryItem: React.FC<Props> = (props) => {
             </Grid>
             <Grid item>
                 <Tooltip title="Add checklist">
-                    {/* <Fab color="primary" onClick={handleCreateChecklistOpen}> */}
-                    <Fab color="primary">
+                    <Fab color="primary" onClick={handleCreateChecklistOpen}>
                         <AddIcon />
                     </Fab>
                 </Tooltip>
-                {/* <PostChecklistFormDialog open={createChecklistOpen} onClose={handleCreateChecklistClose} onClickSubmit={handleCreateChecklistSubmit} onChangeTitle={setChecklistTitle} onChangeDesc={setCategoryDesc} /> */}
+                <PostChecklistFormDialog
+                    open={createChecklistOpen}
+                    onClose={handleCreateChecklistClose}
+                    onClickSubmit={handleCreateChecklistSubmit}
+                    onChangeTitle={setChecklistTitle}
+                    onChangeDesc={setChecklistDesc}
+                />
             </Grid>
         </Box>
     );
