@@ -10,7 +10,7 @@ import { Task } from '../tasks/models';
 type Props = {
     title: string;
     description: string;
-    tasks: Task[];
+    // tasks: Task[];
 };
 
 const FavoritedChecklistItem: React.FC<Props> = (props) => {
@@ -19,17 +19,17 @@ const FavoritedChecklistItem: React.FC<Props> = (props) => {
             <Grid item>
                 <Paper sx={{ pl: 3, pr: 3 }}>
                     <Box display="grid" justifyContent="space-between">
-                        <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
+                        <Typography sx={{ pt: 2, pb: 1 }} textAlign='left'>
                             {props.title}
                         </Typography>
-                        <IconButton sx={{ gridColumn: 3}}><MoreHorizRoundedIcon/></IconButton>
+                        <IconButton sx={{ gridColumn: 3 }}><MoreHorizRoundedIcon /></IconButton>
                         {/* <IconButton sx={{ gridColumn: 3}} onClick={handleChecklistClick}><MoreHorizRoundedIcon/></IconButton>
                         <MoreChecklistContextMenu
                             anchorEl={checklistAnchorEl}
                             open={openChecklist}
                             onClose={handleChecklistClose}
                         /> */}
-                        <Typography sx={{ fontSize: '.9em', pb: 3}}>
+                        <Typography sx={{ fontSize: '.9em', pb: 3 }}>
                             {props.description}
                         </Typography>
                     </Box>
@@ -37,14 +37,14 @@ const FavoritedChecklistItem: React.FC<Props> = (props) => {
                         pb: 3,
                     }}
                     >
-                        {props.tasks ? (props.tasks.map((task) => (
+                        {/* {props.tasks ? (props.tasks.map((task) => (
                             <TaskItem
                                 title={task.title}
                             />
-                        ))) : "No current tasks!"}
+                        ))) : "No current tasks!"} */}
                     </List>
-                    <Box display='flex' justifyContent="space-between" sx={{ pb: 2}}>
-                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} defaultChecked/>
+                    <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
+                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} defaultChecked />
                         <Button variant="contained">Archive</Button>
                     </Box>
                 </Paper>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Grid, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, Grid, IconButton, ListItem, ListItemText, Typography } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 
 type Props = {
     title: string;
@@ -7,12 +8,13 @@ type Props = {
 
 const HabitItem: React.FC<Props> = (props) => {
     return (
-        <ListItem divider={true}>
-            <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
+        <ListItem divider={true} sx={{ display: 'flex', justifyContent: 'space-between', minWidth: 250 }}>
+            <ListItemText sx={{ pl: 1, pr: 2 }} disableTypography={false}>
                 <Typography variant="body2">
                     {props.title}
                 </Typography>
             </ListItemText>
+            <IconButton color="primary"><AddIcon /></IconButton>
         </ListItem>
     );
 };

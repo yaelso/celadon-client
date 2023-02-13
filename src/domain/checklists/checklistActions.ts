@@ -68,6 +68,10 @@ export const postChecklist = (jwt: string, requestData: PostRequestData) => {
   );
 };
 
+// TODO: patch checklist (archive/unarchive)
+// TODO: patch checklist (favorite/unfavorite)
+
+
 type DeleteResponseBody = {
   details: string;
 }
