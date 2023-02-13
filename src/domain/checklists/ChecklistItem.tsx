@@ -81,6 +81,10 @@ const ChecklistItem: React.FC<Props> = (props) => {
                         />
                     ))) : "No current tasks!"}
                 </List>
+                <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', pb: 3 }}>
+                    <TextField required id="submit-task-textfield" label="Task..." variant="outlined" sx={{ pb: 2 }} size="small" />
+                    <Button>Add a Task</Button>
+                </Box>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
                     <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
                     <Button variant="contained">Archive</Button>
