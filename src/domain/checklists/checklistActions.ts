@@ -68,9 +68,49 @@ export const postChecklist = (jwt: string, requestData: PostRequestData) => {
   );
 };
 
-// TODO: patch checklist (archive/unarchive)
-// TODO: patch checklist (favorite/unfavorite)
+type PatchResponseBody = {
+  checklist: Checklist;
+}
 
+export const favoriteChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Favorite(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const unfavoriteChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Unfavorite(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const archiveChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Archive(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const unarchiveChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Unarchive(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
 
 type DeleteResponseBody = {
   details: string;
