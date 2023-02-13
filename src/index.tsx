@@ -13,6 +13,8 @@ root.render(
   <React.StrictMode>
     <BrowserRouter basename={routes.Root}>
       <SnackbarProvider
+        preventDuplicate
+        autoHideDuration={3000}
         maxSnack={3}
         anchorOrigin={{
           vertical: 'top',
