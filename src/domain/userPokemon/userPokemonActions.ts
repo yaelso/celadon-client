@@ -25,3 +25,27 @@ export const postUserPokemon = (jwt: string, pokemonId: number) => sendApiReques
     }
   },
 );
+
+type PatchExpRequestData = { exp: number, pokemon_id: number };
+export type PatchPokmeonExpRequestParams = PatchExpRequestData;
+
+type PatchExpRequestBody = Pick<PatchExpRequestData, 'exp'>;
+type PatchExpResponseBody = { 'user pokemon': UserPokemon };
+
+export const addExpToPokemon = (
+  jwt: string,
+  params: PatchExpRequestData,
+) => {
+  const { pokemon_id, ...requestBody } = params;
+
+  return sendApiRequest<PatchExpRequestBody, PatchExpResponseBody>(
+    {
+      method:  'PATCH',
+      url:     API_ROUTES().UserPokemon_AddExp(pokemon_id),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+      },
+      data: requestBody,
+    },
+  );
+};
