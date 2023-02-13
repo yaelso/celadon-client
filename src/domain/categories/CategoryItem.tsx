@@ -8,17 +8,23 @@ import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useLocalStorage } from '../../applicationState/hooks';
+import { deleteCategory, fetchCategories } from './categoryActions';
+import { PostTaskParams } from '../tasks/taskActions';
 
 type Props = {
     id: number;
     title: string;
     description: string;
+    removeCategory: (id: number) => void;
     checklists: Checklist[];
     addChecklist: (params: PostChecklistParams) => void;
+    removeChecklist: (id: number) => void;
+    addTask: (params: PostTaskParams) => void;
+    removeTask: (id: number) => void;
 };
 
 const CategoryItem: React.FC<Props> = (props) => {
-    const { id, addChecklist } = props;
+    const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask } = props;
 
     // Params for a checklist to be posted if user opens POST form
     const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
@@ -51,6 +57,13 @@ const CategoryItem: React.FC<Props> = (props) => {
         [addChecklist, checklistDesc, checklistTitle, id, setCreateChecklistOpen],
     );
 
+    const handleDeleteCategoryClick = useCallback(
+        () => {
+            removeCategory(id);
+        },
+        [deleteCategory, id]
+    )
+
     return (
         <Box sx={{
             pb: 10
@@ -59,7 +72,7 @@ const CategoryItem: React.FC<Props> = (props) => {
                 <Typography variant="h5" sx={{ pt: 5, pb: 1 }}>
                     {props.title}
                 </Typography>
-                <IconButton><DeleteRoundedIcon /></IconButton>
+                <IconButton onClick={handleDeleteCategoryClick}><DeleteRoundedIcon /></IconButton>
             </Box>
             <Typography sx={{ pb: 2 }}>
                 {props.description}
@@ -69,9 +82,13 @@ const CategoryItem: React.FC<Props> = (props) => {
                 {!!props.checklists?.length ? (props.checklists.map((checklist) => (
                     <ChecklistItem
                         key={`checklist-${checklist.id}`}
+                        id={checklist.id}
                         title={checklist.title}
                         description={checklist.description}
                         tasks={checklist.tasks}
+                        removeChecklist={removeChecklist}
+                        addTask={addTask}
+                        removeTask={removeTask}
                     />
                 ))) : "No current checklists!"}
             </Grid>
