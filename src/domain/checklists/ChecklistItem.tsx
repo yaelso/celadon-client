@@ -40,14 +40,17 @@ const ChecklistItem: React.FC<Props> = (props) => {
         setChecklistAnchorEl(null);
     };
 
-    // const handleDeleteChecklistClick = useCallback(
-    //     () => {
-    //         removeChecklist(id);
-    //         handleChecklistClose();
-    //     },
-    //     [deleteChecklist, id]
-    // )
+    const handleChangeTaskTitle = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const titleText = event.target.value;
+        setTaskTitle(titleText);
+    }
 
+    const handleCreateTaskSubmit = useCallback(
+        () => {
+            addTask({ title: taskTitle, checklist_id: id });
+        },
+        [addTask, taskTitle, id],
+    );
 
     return (
         <Grid item sx={{ minWidth: 300, minHeight: 300 }}>
@@ -82,8 +85,17 @@ const ChecklistItem: React.FC<Props> = (props) => {
                     ))) : "No current tasks!"}
                 </List>
                 <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', pb: 3 }}>
-                    <TextField required id="submit-task-textfield" label="Task..." variant="outlined" sx={{ pb: 2 }} size="small" />
-                    <Button>Add a Task</Button>
+                    <TextField
+                        required
+                        focused
+                        id="submit-task-textfield"
+                        label="Task"
+                        variant="outlined"
+                        sx={{ pb: 2 }}
+                        size="small"
+                        onBlur={handleChangeTaskTitle}
+                    />
+                    <Button onClick={handleCreateTaskSubmit}>Add a Task</Button>
                 </Box>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
                     <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />

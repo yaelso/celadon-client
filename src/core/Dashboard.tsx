@@ -59,7 +59,7 @@ const Dashboard: React.FC = (props) => {
 
   //         }
   //         )
-  //       snackbar.enqueueSnackbar('Checklist successfully created!', { variant: 'success' });
+  //       snackbar.enqueueSnackbar('User successfully created!', { variant: 'success' });
   //     })
   //     .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
   // },
@@ -188,8 +188,6 @@ const Dashboard: React.FC = (props) => {
   const deleteCategoryById = useCallback(
     (id: number) => deleteCategory(jwt, id)
       .then(res => {
-        // const categoryToRemove = categories.find(c => c.id === id);
-        // setCategories(prev => removeArrayElements(prev, categoryToRemove));
         setCategories((prev) => prev.filter((newCat) => {
           return newCat.id !== id;
         }))
@@ -242,8 +240,6 @@ const Dashboard: React.FC = (props) => {
   const deleteChecklistById = useCallback(
     (id: number) => deleteChecklist(jwt, id)
       .then(res => {
-        // const categoryToRemove = categories.find(c => c.id === id);
-        // setCategories(prev => removeArrayElements(prev, categoryToRemove));
         setChecklists((prev) => prev.filter((newList) => {
           return newList.id !== id;
         }))
@@ -264,6 +260,7 @@ const Dashboard: React.FC = (props) => {
         .then(res => {
           const newTasks = [...tasks, res.data.task]
           setTasks(newTasks)
+          // fetchAllCategories();
           snackbar.enqueueSnackbar('Task successfully created!', { variant: 'success' });
         })
         .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
@@ -274,8 +271,6 @@ const Dashboard: React.FC = (props) => {
   const deleteTaskById = useCallback(
     (id: number) => deleteTask(jwt, id)
       .then(res => {
-        // const categoryToRemove = categories.find(c => c.id === id);
-        // setCategories(prev => removeArrayElements(prev, categoryToRemove));
         setTasks((prev) => prev.filter((newTask) => {
           return newTask.id !== id;
         }))
@@ -314,14 +309,14 @@ const Dashboard: React.FC = (props) => {
     [categories, fetchAllCategories],
   );
 
-  useEffect(
-    () => {
-      if (!categories) {
-        fetchAllCategories();
-      }
-    },
-    [categories, fetchAllCategories],
-  );
+  // useEffect(
+  //   () => {
+  //     if (!categories) {
+  //       fetchAllCategories();
+  //     }
+  //   },
+  //   [categories, fetchAllCategories],
+  // );
 
   return (
     <AppLayout>
