@@ -15,7 +15,7 @@ import Categories from '../domain/categories/CategoryItem';
 import { deleteCategory, fetchCategories, postCategory, PostCategoryParams } from '../domain/categories/categoryActions';
 import { Category } from '../domain/categories/models';
 import PostCategoryFormDialog from '../domain/categories/PostCategoryFormDialog';
-import { deleteChecklist, postChecklist, PostChecklistParams } from '../domain/checklists/checklistActions';
+import { deleteChecklist, favoriteChecklist, postChecklist, PostChecklistParams, unfavoriteChecklist } from '../domain/checklists/checklistActions';
 import { Checklist } from '../domain/checklists/models';
 import MoreChecklistContextMenu from '../domain/checklists/MoreChecklistContextMenu';
 import PostChecklistFormDialog from '../domain/checklists/PostChecklistFormDialog';
@@ -42,30 +42,6 @@ const Dashboard: React.FC = (props) => {
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const [jwt, _] = useLocalStorage('authToken');
-
-  // const postNewUser = () => postUser(jwt)
-  //   .then(res => setUser(prev => {
-  //     [res.data].concat(prev);
-  //     snackbar.enqueueSnackbar('User successfully created!', { variant: 'success' });
-  //   }))
-  //   .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
-
-  //   const postNewUser = useCallback(
-  //     () => {
-  //       postUser(jwt)
-  //         .then(res => {
-  //           const newUser = res.data.user;
-  //           setUser()
-
-  //         }
-  //         )
-  //       snackbar.enqueueSnackbar('User successfully created!', { variant: 'success' });
-  //     })
-  //     .catch(() => snackbar.enqueueSnackbar('User creation failed!', { variant: 'error' }));
-  // },
-  //   [jwt, snackbar],
-  //   )
-
 
   const [categories, setCategories] = useState<FlatCategory[] | undefined>(undefined);
   const [checklists, setChecklists] = useState<FlatChecklist[] | undefined>(undefined);
@@ -147,28 +123,6 @@ const Dashboard: React.FC = (props) => {
     [jwt, snackbar],
   );
 
-  // const addActivePokemonExp = useCallback(
-  //   () => {
-  //     if (!user?.pokemon_id) {
-  //       console.log('User is undefined or has no active pokemon - bailing out of exp add');
-  //       return;
-  //     }
-
-  //     const expAward = BASE_POKEMON_EXP_AWARD;
-
-  //     addExpToPokemon(jwt, { pokemon_id: user?.pokemon_id ?? 0, exp: expAward })
-  //       .then(res => {
-  //         const userPokemon = res.data['user pokemon'];
-
-  //         console.log(`Awarded ${userPokemon.exp}`);
-
-  //         snackbar.enqueueSnackbar(`Your active pokemon was awarded ${expAward} EXP!`, { variant: 'success' });
-  //       })
-  //       .catch(() => snackbar.enqueueSnackbar('Failed to award EXP to active pokemon!', { variant: 'error' }));
-  //   },
-  //   [jwt, snackbar, user],
-  // );
-
   const postNewCategory = useCallback((params: PostCategoryParams) => {
     postCategory(jwt, params)
       .then(res => {
@@ -237,6 +191,42 @@ const Dashboard: React.FC = (props) => {
     [jwt, snackbar],
   );
 
+  const patchFavoriteChecklist = useCallback(
+    (id: number) => favoriteChecklist(jwt, id)
+      .then(res => {
+        const favorited_status = res.data.checklist.is_favorited;
+
+        const newChecklists = checklists.map(checklist => {
+          if (checklist.id === id) {
+            return { ...checklist, is_favorited: favorited_status };
+          }
+        })
+
+        setChecklists(newChecklists);
+        snackbar.enqueueSnackbar('Checklist favorited', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist favorite failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchUnfavoriteChecklist = useCallback(
+    (id: number) => unfavoriteChecklist(jwt, id)
+      .then(res => {
+        const favorited_status = res.data.checklist.is_favorited;
+
+        const newChecklists = checklists.map(checklist => {
+          if (checklist.id === id) {
+            return { ...checklist, is_favorited: favorited_status };
+          }
+        })
+
+        setChecklists(newChecklists);
+        snackbar.enqueueSnackbar('Checklist unfavorited', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist unfavorite failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
   const deleteChecklistById = useCallback(
     (id: number) => deleteChecklist(jwt, id)
       .then(res => {
@@ -260,7 +250,7 @@ const Dashboard: React.FC = (props) => {
         .then(res => {
           const newTasks = [...tasks, res.data.task]
           setTasks(newTasks)
-          // fetchAllCategories();
+          fetchAllCategories();
           snackbar.enqueueSnackbar('Task successfully created!', { variant: 'success' });
         })
         .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
@@ -284,18 +274,6 @@ const Dashboard: React.FC = (props) => {
 
   // region Pokemon API calls
 
-  // region user calls
-  // const postNewUser = useCallback(
-  //   () => {
-  //     postUser(jwt)
-  //       .then(res => {
-
-  //       })
-  //       .catch(() => snackbar.enqueueSnackbar('Error creation new user!', { variant: 'error'}))
-  //   },
-  //   [jwt, snackbar],
-  // )
-
 
   // end region
 
@@ -308,15 +286,6 @@ const Dashboard: React.FC = (props) => {
     },
     [categories, fetchAllCategories],
   );
-
-  // useEffect(
-  //   () => {
-  //     if (!categories) {
-  //       fetchAllCategories();
-  //     }
-  //   },
-  //   [categories, fetchAllCategories],
-  // );
 
   return (
     <AppLayout>
@@ -341,8 +310,14 @@ const Dashboard: React.FC = (props) => {
           checklists={category.checklists}
           addChecklist={postNewChecklist}
           removeChecklist={deleteChecklistById}
+          tagChecklistFavorite={patchFavoriteChecklist}
+          tagChecklistUnfavorite={patchUnfavoriteChecklist}
+          // tagChecklistArchive={}
           addTask={postNewTask}
           removeTask={deleteTaskById}
+        // tagTaskInProgress={ }
+        // tagTaskComplete={ }
+        // tagScheduleTask={ }
         />
       ))) : <Box sx={{ justifyContent: 'center' }}><Typography sx={{ textAlign: 'center' }}>No current categories! Please make a context category to house your lists</Typography></Box>}
     </AppLayout>

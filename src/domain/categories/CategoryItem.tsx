@@ -16,15 +16,21 @@ type Props = {
     title: string;
     description: string;
     removeCategory: (id: number) => void;
+    tagChecklistFavorite: (id: number) => void;
+    tagChecklistUnfavorite: (id: number) => void;
+    // tagChecklistArchive: (id: number) => void;
     checklists: Checklist[];
     addChecklist: (params: PostChecklistParams) => void;
     removeChecklist: (id: number) => void;
     addTask: (params: PostTaskParams) => void;
     removeTask: (id: number) => void;
+    // tagTaskInProgress: (id: number) => void;
+    // tagTaskComplete: (id: number) => void;
+    // tagScheduleTask: (id: number) => void;
 };
 
 const CategoryItem: React.FC<Props> = (props) => {
-    const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask } = props;
+    const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask, tagChecklistFavorite, tagChecklistUnfavorite } = props;
 
     // Params for a checklist to be posted if user opens POST form
     const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
@@ -85,10 +91,17 @@ const CategoryItem: React.FC<Props> = (props) => {
                         id={checklist.id}
                         title={checklist.title}
                         description={checklist.description}
+                        isFavorited={checklist.is_favorited}
                         tasks={checklist.tasks}
                         removeChecklist={removeChecklist}
+                        tagChecklistFavorite={tagChecklistFavorite}
+                        tagChecklistUnfavorite={tagChecklistUnfavorite}
+                        // tagChecklistArchive={}
                         addTask={addTask}
                         removeTask={removeTask}
+                    // tagTaskInProgress={ }
+                    // tagTaskComplete={ }
+                    // tagScheduleTask={ }
                     />
                 ))) : "No current checklists!"}
             </Grid>

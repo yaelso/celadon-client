@@ -7,7 +7,7 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { Checklist } from './models';
 import { Task } from '../tasks/models';
 import TaskItem from '../tasks/TaskItem';
-import { deleteChecklist } from './checklistActions';
+import { deleteChecklist, favoriteChecklist, unfavoriteChecklist } from './checklistActions';
 import { PostTaskParams } from '../tasks/taskActions';
 
 
@@ -15,15 +15,22 @@ type Props = {
     id: number;
     title: string;
     description: string;
+    isFavorited: boolean;
     tasks: Task[];
     removeChecklist: (id: number) => void;
+    tagChecklistFavorite: (id: number) => void;
+    tagChecklistUnfavorite: (id: number) => void;
+    // tagChecklistArchive: (id: number) => void;
     addTask: (params: PostTaskParams) => void;
     removeTask: (id: number) => void;
+    // tagTaskInProgress: (id: number) => void;
+    // tagTaskComplete: (id: number) => void;
+    // tagScheduleTask: (id: number) => void;
 };
 
 
 const ChecklistItem: React.FC<Props> = (props) => {
-    const { id, removeChecklist, addTask, removeTask } = props;
+    const { id, removeChecklist, tagChecklistFavorite, tagChecklistUnfavorite, addTask, removeTask } = props;
 
     // Params for a task to be posted, if user opens POST form
     const [taskTitle, setTaskTitle] = useState<string | undefined>();
@@ -51,6 +58,27 @@ const ChecklistItem: React.FC<Props> = (props) => {
         },
         [addTask, taskTitle, id],
     );
+
+    const handleFavoriteSubmit = useCallback(
+        () => {
+            tagChecklistFavorite(id);
+        },
+        [favoriteChecklist, id],
+    );
+
+    const handleUnfavoriteSubmit = useCallback(
+        () => {
+            tagChecklistUnfavorite(id);
+        },
+        [unfavoriteChecklist, id],
+    );
+
+    // const handleArchiveSubmit = useCallback(
+    //     () => {
+    //         tagChecklistArchive({ checklist_id: id });
+    //     },
+    //     [addTask, id],
+    // );
 
     return (
         <Grid item sx={{ minWidth: 300, minHeight: 300 }}>
@@ -98,7 +126,9 @@ const ChecklistItem: React.FC<Props> = (props) => {
                     <Button onClick={handleCreateTaskSubmit}>Add a Task</Button>
                 </Box>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
-                    <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+                    {props.isFavorited == true ?
+                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleFavoriteSubmit} defaultChecked={true} />
+                        : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleUnfavoriteSubmit} />}
                     <Button variant="contained">Archive</Button>
                 </Box>
             </Paper>
