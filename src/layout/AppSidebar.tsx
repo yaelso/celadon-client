@@ -39,7 +39,7 @@ export const AppSidebar: React.FC<Props> = props => {
       sx={{
         zIndex: 2,
         flexShrink: 0,
-        }}
+      }}
     >
       <DrawerHeader>
         <IconButton onClick={props.toggleDrawer}>

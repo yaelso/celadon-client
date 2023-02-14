@@ -17,7 +17,7 @@ root.render(
         autoHideDuration={3000}
         maxSnack={3}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}>
         <AppRouter />
