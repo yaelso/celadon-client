@@ -1,11 +1,7 @@
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import { Box, Breadcrumbs, Button, Checkbox, CssBaseline, Grid, IconButton, Link, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
+import { Box, Breadcrumbs, CssBaseline, Grid, Link, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import React, { useCallback, useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
-import { Category } from '../domain/categories/models';
 import ArchivedChecklistItem from '../domain/checklists/ArchivedChecklistItem';
 import { fetchArchivedChecklists } from '../domain/checklists/checklistActions';
 import { Checklist } from '../domain/checklists/models';

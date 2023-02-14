@@ -1,15 +1,13 @@
-import React, { useCallback, useState } from 'react';
-import { Box, Divider, Fab, Grid, IconButton, Tooltip, Typography } from "@mui/material";
-import { useSnackbar } from 'notistack';
-import { PostChecklistParams, postChecklist } from '../checklists/checklistActions';
-import { Checklist } from '../checklists/models';
-import ChecklistItem from '../checklists/ChecklistItem';
-import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useLocalStorage } from '../../applicationState/hooks';
-import { deleteCategory, fetchCategories } from './categoryActions';
+import { Box, Divider, Fab, Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import React, { useCallback, useState } from 'react';
+import { PostChecklistParams } from '../checklists/checklistActions';
+import ChecklistItem from '../checklists/ChecklistItem';
+import { Checklist } from '../checklists/models';
+import PostChecklistFormDialog from '../checklists/PostChecklistFormDialog';
 import { PatchDueDateRequestParams, PostTaskParams } from '../tasks/taskActions';
+import { deleteCategory } from './categoryActions';
 
 type Props = {
     id: number;

@@ -1,10 +1,6 @@
+import { Box, Button, Card, CardContent, CardMedia, Container, CssBaseline, Grid, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import React from "react";
-import { Link } from "react-router-dom";
-import { Box, Button, Card, CardContent, CardMedia, Container, CssBaseline, Divider, Grid, ImageList, ImageListItem, Paper, Typography } from '@mui/material';
-import { styled, ThemeProvider } from '@mui/material/styles';
-import { theme } from './themes/theme';
-import { makeRoutes } from './navigation/routes';
-import { signInWithGoogle } from "./firebase";
 import { ReactComponent as FirebaseIcon } from './assets/firebase.svg';
 import { ReactComponent as FlaskIcon } from './assets/flask.svg';
 import { ReactComponent as GoogleIcon } from './assets/google.svg';
@@ -14,6 +10,9 @@ import { ReactComponent as ReactIcon } from './assets/react.svg';
 import { ReactComponent as ReactRouter } from './assets/reactrouter.svg';
 import { ReactComponent as TypeScriptIcon } from './assets/typescript.svg';
 import YaelOnTheBeach from './assets/yael.png';
+import { signInWithGoogle } from "./firebase";
+import { makeRoutes } from './navigation/routes';
+import { theme } from './themes/theme';
 
 const iconList = [<FirebaseIcon />, <FlaskIcon />, <GoogleIcon />, <MuiIcon />, <PostgresIcon />, <ReactIcon />, <ReactRouter />, <TypeScriptIcon />]
 

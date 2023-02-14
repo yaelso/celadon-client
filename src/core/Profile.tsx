@@ -1,20 +1,20 @@
-import { Box, Breadcrumbs, Button, CssBaseline, Fab, Grid, Link, List, Paper, Tooltip, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, CssBaseline, Grid, Link, List, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useCallback, useEffect, useState } from "react";
 import { useLocalStorage } from "../applicationState/hooks";
+import UserCalendar from "../domain/calendar/Calendar";
 import { deleteChecklist, fetchFavorites } from "../domain/checklists/checklistActions";
 import FavoritedChecklistItem from "../domain/checklists/FavoritedChecklistItem";
 import { Checklist } from "../domain/checklists/models";
-import { deleteHabit, fetchHabits, postHabit, PostHabitParams } from "../domain/habits/habitActions";
+import { fetchHabits, postHabit, PostHabitParams } from "../domain/habits/habitActions";
 import HabitItem from "../domain/habits/HabitItem";
+import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
 import { Task } from "../domain/tasks/models";
+import ScheduledTaskItem from "../domain/tasks/ScheduledTaskItem";
+import { clearTaskDueDate, deleteTask, fetchTasksWithDueDate, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate, TaskWithDueDateFetchParams } from "../domain/tasks/taskActions";
+import { UserPokemon } from "../domain/userPokemon/models";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
-import { UserPokemon } from "../domain/userPokemon/models";
-import { clearTaskDueDate, deleteTask, fetchTasksWithDueDate, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate, TaskWithDueDateFetchParams } from "../domain/tasks/taskActions";
-import UserCalendar from "../domain/calendar/Calendar";
-import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
-import ScheduledTaskItem from "../domain/tasks/ScheduledTaskItem";
 
 
 type FlatChecklist = Omit<Checklist, 'tasks'>;

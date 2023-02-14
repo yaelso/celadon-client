@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, CssBaseline, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
+import { Box, Breadcrumbs, CssBaseline, Grid, Link, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
