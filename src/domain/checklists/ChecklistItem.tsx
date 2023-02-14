@@ -115,6 +115,8 @@ const ChecklistItem: React.FC<Props> = (props) => {
                             key={`task-${task.id}`}
                             id={task.id}
                             title={task.title}
+                            isComplete={task.is_complete}
+                            isInProgress={task.in_progress}
                             removeTask={removeTask}
                             tagTaskInProgress={tagTaskInProgress}
                             tagTaskNotInProgress={tagTaskNotInProgress}
