@@ -455,6 +455,7 @@ const Dashboard: React.FC = (props) => {
           tagChecklistFavorite={patchFavoriteChecklist}
           tagChecklistUnfavorite={patchUnfavoriteChecklist}
           tagChecklistArchive={patchArchiveChecklist}
+          tagChecklistUnarchive={patchUnarchiveChecklist}
           addTask={postNewTask}
           removeTask={deleteTaskById}
           tagTaskInProgress={patchTaskInProgress}

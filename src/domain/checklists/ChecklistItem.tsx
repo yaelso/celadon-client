@@ -16,11 +16,13 @@ type Props = {
     title: string;
     description: string;
     isFavorited: boolean;
+    isArchived: boolean;
     tasks: Task[];
     removeChecklist: (id: number) => void;
     tagChecklistFavorite: (id: number) => void;
     tagChecklistUnfavorite: (id: number) => void;
     tagChecklistArchive: (id: number) => void;
+    tagChecklistUnarchive: (id: number) => void;
     addTask: (params: PostTaskParams) => void;
     removeTask: (id: number) => void;
     tagTaskInProgress: (id: number) => void;
@@ -33,7 +35,7 @@ type Props = {
 
 
 const ChecklistItem: React.FC<Props> = (props) => {
-    const { id, removeChecklist, tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive, addTask, removeTask,
+    const { id, isFavorited, isArchived, removeChecklist, tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive, tagChecklistUnarchive, addTask, removeTask,
         tagTaskInProgress, tagTaskNotInProgress, tagTaskComplete, tagTaskIncomplete, assignDueDate, removeDueDate
     } = props;
 
@@ -85,6 +87,13 @@ const ChecklistItem: React.FC<Props> = (props) => {
             tagChecklistArchive(id);
         },
         [archiveChecklist, id],
+    );
+
+    const handleUnarchiveSubmit = useCallback(
+        () => {
+            tagChecklistUnarchive(id);
+        },
+        [unarchiveChecklist, id],
     );
 
     return (
@@ -141,10 +150,13 @@ const ChecklistItem: React.FC<Props> = (props) => {
                     <Button onClick={handleCreateTaskSubmit}>Add a Task</Button>
                 </Box>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
-                    {props.isFavorited == true ?
+                    {props.isFavorited === true ?
                         <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleUnfavoriteSubmit} defaultChecked={true} />
                         : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleFavoriteSubmit} />}
-                    <Button variant="contained" onClick={handleArchiveSubmit}>Archive</Button>
+                    {props.isArchived === true ?
+                        <Button variant="contained" onClick={handleUnarchiveSubmit}>Unarchive</Button>
+                        : <Button variant="contained" onClick={handleArchiveSubmit}>Archive</Button>
+                    }
                 </Box>
             </Paper>
         </Grid>

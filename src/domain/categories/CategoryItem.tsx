@@ -17,6 +17,7 @@ type Props = {
     tagChecklistFavorite: (id: number) => void;
     tagChecklistUnfavorite: (id: number) => void;
     tagChecklistArchive: (id: number) => void;
+    tagChecklistUnarchive: (id: number) => void;
     checklists: Checklist[];
     addChecklist: (params: PostChecklistParams) => void;
     removeChecklist: (id: number) => void;
@@ -32,7 +33,7 @@ type Props = {
 
 const CategoryItem: React.FC<Props> = (props) => {
     const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask,
-        tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive,
+        tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive, tagChecklistUnarchive,
         tagTaskInProgress, tagTaskNotInProgress, tagTaskComplete, tagTaskIncomplete,
         assignDueDate, removeDueDate
     } = props;
@@ -97,11 +98,13 @@ const CategoryItem: React.FC<Props> = (props) => {
                         title={checklist.title}
                         description={checklist.description}
                         isFavorited={checklist.is_favorited}
+                        isArchived={checklist.is_archived}
                         tasks={checklist.tasks}
                         removeChecklist={removeChecklist}
                         tagChecklistFavorite={tagChecklistFavorite}
                         tagChecklistUnfavorite={tagChecklistUnfavorite}
                         tagChecklistArchive={tagChecklistArchive}
+                        tagChecklistUnarchive={tagChecklistUnarchive}
                         addTask={addTask}
                         removeTask={removeTask}
                         tagTaskInProgress={tagTaskInProgress}
