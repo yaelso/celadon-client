@@ -1,5 +1,3 @@
-import { PokemonClient } from "pokenode-ts";
-
 const base_evo = [
     'Bulbasaur', 'Charmander', 'Squirtle', 'Caterpie', 'Weedle', 'Pidgey', 'Rattata',
     'Spearow', 'Ekans', 'Pikachu', 'Sandshrew', 'Nidoran♀', 'Nidoran♂', 'Clefairy', 'Vulpix', 'Jigglypuff',
@@ -14,13 +12,4 @@ const base_evo = [
 
 const pickRandomBase = () => {
     return Math.floor(Math.random() * ((base_evo.length) - 1) + 1);
-};
-
-const queryPokemonData = async (pokemon) => {
-    const api = new PokemonClient();
-
-    await api
-        .getPokemonByName(pokemon)
-        .then((data) => console.log(data))
-        .catch((e) => console.error(e))
 };

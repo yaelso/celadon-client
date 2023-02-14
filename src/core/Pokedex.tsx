@@ -1,13 +1,15 @@
 import { Box, Breadcrumbs, CssBaseline, Grid, Link, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
-import { UserPokemon } from '../domain/userPokemon/models';
+import { UserPokemon, PokemonViewModel } from '../domain/userPokemon/models';
 import UserPokemonItem from '../domain/userPokemon/UserPokemonItem';
 import { fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
+import { PokemonClient, Pokemon } from 'pokenode-ts';
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -24,12 +26,71 @@ const Pokedex: React.FC = () => {
   const [jwt, _] = useLocalStorage('authToken');
 
   const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+  const [pokeNodePokemon, setPokenodePokemon] = useState<Pokemon[] | undefined>(undefined);
 
+  const addPokenodePokemon = useCallback(
+    (pk: Pokemon) => setPokenodePokemon(prev => (prev ?? []).concat([pk])),
+    [setPokenodePokemon],
+  );
+
+  const pokemonViewModels: PokemonViewModel[] = useMemo(
+    () => (userPokemon ?? []).map(pk => {
+      const pokeNodeObj = (pokeNodePokemon ?? []).find(p => p.name == pk.pokemon.name.toLowerCase());
+
+      return {
+        id: pk.pokemon_id,
+        exp: pk.exp,
+        name: pokeNodeObj?.name ?? '',
+        weight: pokeNodeObj?.weight ?? 0,
+        height: pokeNodeObj?.height ?? 0,
+        sprite: pokeNodeObj?.sprites?.front_default ?? '',
+        types: pokeNodeObj?.types ?? [],
+      };
+    }),
+    [pokeNodePokemon, userPokemon],
+  );
+  console.log(pokemonViewModels);
+
+  const pokeNodeApi = useMemo(() => new PokemonClient(), []);
 
   // API callbacks
-  const fetchAllUserPokemon = () => fetchUserPokemon(jwt)
-    .then(data => setUserPokemon(data))
-    .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+  const fetchAllUserPokemon = useCallback(
+    () => {
+      fetchUserPokemon(jwt)
+        .then(res => {
+          const userPokeObjs = res.data;
+
+          setUserPokemon(userPokeObjs);
+        })
+        .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
+  const fetchPokeNodeData = useCallback(
+    (pokemonName: string) => {
+      pokeNodeApi.getPokemonByName(pokemonName.toLowerCase())
+        .then(pk => addPokenodePokemon(pk))
+        .catch(
+          err => snackbar
+            .enqueueSnackbar(
+              'An error occurred while fetching your Pokemon data - please try again later!',
+              { variant: 'error' },
+            ),
+        );
+    },
+    [addPokenodePokemon, pokeNodeApi, snackbar],
+  );
+
+  useEffect(fetchAllUserPokemon, []);
+
+  useEffect(
+    () => {
+      const pokemonNames = (userPokemon ?? []).map(p => p.pokemon.name);
+      pokemonNames.forEach((name) => fetchPokeNodeData(name));
+    },
+    [userPokemon],
+  );
 
   return (
     <AppLayout>
@@ -46,13 +107,17 @@ const Pokedex: React.FC = () => {
         </Breadcrumbs>
       </Box>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
-        {!!userPokemon?.length ? (userPokemon.map((pokemon) => (
-          <UserPokemonItem
-            key={`userPokemon-${pokemon.pokemon_id}`}
-            id={pokemon.pokemon_id}
-            name={pokemon.name}
-            exp={pokemon.exp}
-          />))) : "No current Pokemon!"}
+        {
+          !!pokemonViewModels?.length
+            ? (pokemonViewModels.map(
+              (pokemon) => (
+                <UserPokemonItem
+                  key={`userPokemon-${pokemon.id}`}
+                  {...pokemon}
+                />))
+            )
+            : <span>'No current Pokemon!'</span>
+        }
       </Grid>
     </AppLayout>
   )
