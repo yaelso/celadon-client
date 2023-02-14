@@ -11,9 +11,10 @@ import { Task } from "../domain/tasks/models";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
 import { UserPokemon } from "../domain/userPokemon/models";
-import { clearTaskDueDate, deleteTask, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate } from "../domain/tasks/taskActions";
+import { clearTaskDueDate, deleteTask, fetchTasksWithDueDate, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate, TaskWithDueDateFetchParams } from "../domain/tasks/taskActions";
 import UserCalendar from "../domain/calendar/Calendar";
 import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
+import ScheduledTaskItem from "../domain/tasks/ScheduledTaskItem";
 
 
 type FlatChecklist = Omit<Checklist, 'tasks'>;
@@ -43,7 +44,7 @@ const Profile: React.FC = () => {
   const today = new Date().toJSON().slice(0, 10);
 
 
-  // // API callbacks
+  // region Habits API callbacks and handlers
   const fetchAllHabits = () => fetchHabits(jwt)
     .then(res => setHabits(res.data))
     .catch(() => snackbar.enqueueSnackbar('Habits fetch failed!', { variant: 'error' }));
@@ -83,14 +84,6 @@ const Profile: React.FC = () => {
     [jwt, snackbar],
   );
 
-
-  // const deleteHabitById = (id: number) => deleteHabit(jwt, id)
-  //   .then(data => {
-  //     console.log(data);
-  //     snackbar.enqueueSnackbar('Habit deleted', { variant: 'success' });
-  //   })
-  //   .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
-
   const handleCreateHabitOpen = useCallback(
     () => {
       setCreateHabitOpen(true);
@@ -112,6 +105,13 @@ const Profile: React.FC = () => {
     },
     [postNewHabit, habitTitle, setCreateHabitOpen],
   );
+
+  // region scheduled tasks
+  const fetchAllScheduledTasks = (params: TaskWithDueDateFetchParams) => fetchTasksWithDueDate(jwt, params)
+    .then(res => setScheduledTasks(res.data))
+    .catch(() => snackbar.enqueueSnackbar('Habits fetch failed!', { variant: 'error' }));
+
+  // end region
 
   useEffect(
     () => {
@@ -345,13 +345,11 @@ const Profile: React.FC = () => {
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Schedule"}
         </Typography>
-        {/* {!!favoriteChecklists?.length ? (favoriteChecklists.map((checklist) => (
-          <FavoritedChecklistItem
-              title={checklist.title}
-              description={checklist.description}
-              tasks={checklist.tasks}
+        {!!scheduledTasks?.length ? (scheduledTasks.map((task) => (
+          <ScheduledTaskItem
+            title={task.title}
           />
-          ))) : "No currently scheduled tasks!"} */}
+        ))) : "No currently scheduled tasks!"}
       </Box>
       <Box>
         <Typography variant="h5" sx={{ pt: 2 }}>
