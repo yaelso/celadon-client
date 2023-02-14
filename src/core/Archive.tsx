@@ -1,9 +1,9 @@
 import { Box, Breadcrumbs, CssBaseline, Grid, Link, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
 import ArchivedChecklistItem from '../domain/checklists/ArchivedChecklistItem';
-import { fetchArchivedChecklists } from '../domain/checklists/checklistActions';
+import { archiveChecklist, deleteChecklist, fetchArchivedChecklists, unarchiveChecklist } from '../domain/checklists/checklistActions';
 import { Checklist } from '../domain/checklists/models';
 import { Task } from '../domain/tasks/models';
 import AppLayout from '../layout/AppLayout';
@@ -20,6 +20,35 @@ const Archive: React.FC = () => {
 
   const [archivedChecklists, setArchivedChecklists] = useState<FlatChecklist[] | undefined>(undefined);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
+
+  const tasksByChecklistId = useMemo(
+    () => (tasks ?? []).reduce(
+      (acc, task) => {
+        const tasksForChecklist = acc[`${task.checklist_id}`] ?? [];
+        return { ...acc, [`${task.checklist_id}`]: tasksForChecklist.concat([task]) };
+      },
+      {},
+    ), [tasks],
+  );
+
+  const checklistsByCategoryId = useMemo(
+    () => (archivedChecklists ?? []).reduce(
+      (acc, checklist) => {
+        const checklistsForCategory = acc[`${checklist.category_id}`] ?? [];
+        return {
+          ...acc,
+          [`${checklist.category_id}`]: checklistsForCategory.concat([
+            {
+              ...checklist,
+              tasks: (tasksByChecklistId[`${checklist.id}`] ?? []),
+            },
+          ]),
+        };
+      },
+      {},
+    ),
+    [archivedChecklists, tasksByChecklistId],
+  );
 
   // API callbacks
 
@@ -44,15 +73,60 @@ const Archive: React.FC = () => {
     [jwt, snackbar],
   );
 
+  const patchArchiveChecklist = useCallback(
+    (id: number) => archiveChecklist(jwt, id)
+      .then(res => {
+        const newChecklist = res.data.checklist;
 
-  //   const handleUnarchiveSubmit = useCallback(
-  //     () => {
-  //         tagChecklistArchive(id);
-  //     },
-  //     [unarchiveChecklist, id],
-  // );
+        setArchivedChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
+        snackbar.enqueueSnackbar('Checklist archived', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist archive attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
 
-  // tagChecklistUnarchive: (id: number) => void;
+  const patchUnarchiveChecklist = useCallback(
+    (id: number) => unarchiveChecklist(jwt, id)
+      .then(res => {
+        const newChecklist = res.data.checklist;
+
+        setArchivedChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
+        snackbar.enqueueSnackbar('Checklist unarchived', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist unarchive attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const deleteChecklistById = useCallback(
+    (id: number) => deleteChecklist(jwt, id)
+      .then(res => {
+        setArchivedChecklists((prev) => prev.filter((newList) => {
+          return newList.id !== id;
+        }))
+        snackbar.enqueueSnackbar('Checklist deleted', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist deletion failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  useEffect(
+    () => {
+      if (!archivedChecklists) {
+        fetchAllArchivedChecklists();
+      }
+    },
+    [archivedChecklists, fetchAllArchivedChecklists],
+  );
 
   return (
     <AppLayout>
@@ -73,9 +147,14 @@ const Archive: React.FC = () => {
           {!!archivedChecklists?.length ? (archivedChecklists.map((checklist) => (
             <ArchivedChecklistItem
               key={`checklist-${checklist.id}`}
+              id={checklist.id}
               title={checklist.title}
               description={checklist.description}
-            // tasks={checklist.tasks}
+              isArchived={checklist.is_archived}
+              tasks={tasks}
+              removeChecklist={deleteChecklistById}
+              tagChecklistArchive={patchArchiveChecklist}
+              tagChecklistUnarchive={patchUnarchiveChecklist}
             />
           ))) : "No currently archived checklists!"}
         </Grid>
