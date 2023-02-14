@@ -7,8 +7,8 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { Checklist } from './models';
 import { Task } from '../tasks/models';
 import TaskItem from '../tasks/TaskItem';
-import { deleteChecklist, favoriteChecklist, unfavoriteChecklist } from './checklistActions';
-import { PostTaskParams } from '../tasks/taskActions';
+import { archiveChecklist, deleteChecklist, favoriteChecklist, unarchiveChecklist, unfavoriteChecklist } from './checklistActions';
+import { PatchDueDateRequestParams, PostTaskParams } from '../tasks/taskActions';
 
 
 type Props = {
@@ -20,17 +20,22 @@ type Props = {
     removeChecklist: (id: number) => void;
     tagChecklistFavorite: (id: number) => void;
     tagChecklistUnfavorite: (id: number) => void;
-    // tagChecklistArchive: (id: number) => void;
+    tagChecklistArchive: (id: number) => void;
     addTask: (params: PostTaskParams) => void;
     removeTask: (id: number) => void;
-    // tagTaskInProgress: (id: number) => void;
-    // tagTaskComplete: (id: number) => void;
-    // tagScheduleTask: (id: number) => void;
+    tagTaskInProgress: (id: number) => void;
+    tagTaskNotInProgress: (id: number) => void;
+    tagTaskComplete: (id: number) => void;
+    tagTaskIncomplete: (id: number) => void;
+    assignDueDate: (id: number, params: PatchDueDateRequestParams) => void;
+    removeDueDate: (id: number) => void;
 };
 
 
 const ChecklistItem: React.FC<Props> = (props) => {
-    const { id, removeChecklist, tagChecklistFavorite, tagChecklistUnfavorite, addTask, removeTask } = props;
+    const { id, removeChecklist, tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive, addTask, removeTask,
+        tagTaskInProgress, tagTaskNotInProgress, tagTaskComplete, tagTaskIncomplete, assignDueDate, removeDueDate
+    } = props;
 
     // Params for a task to be posted, if user opens POST form
     const [taskTitle, setTaskTitle] = useState<string | undefined>();
@@ -51,6 +56,8 @@ const ChecklistItem: React.FC<Props> = (props) => {
         const titleText = event.target.value;
         setTaskTitle(titleText);
     }
+
+    // event.preventDefault();
 
     const handleCreateTaskSubmit = useCallback(
         () => {
@@ -73,12 +80,12 @@ const ChecklistItem: React.FC<Props> = (props) => {
         [unfavoriteChecklist, id],
     );
 
-    // const handleArchiveSubmit = useCallback(
-    //     () => {
-    //         tagChecklistArchive({ checklist_id: id });
-    //     },
-    //     [addTask, id],
-    // );
+    const handleArchiveSubmit = useCallback(
+        () => {
+            tagChecklistArchive(id);
+        },
+        [archiveChecklist, id],
+    );
 
     return (
         <Grid item sx={{ minWidth: 300, minHeight: 300 }}>
@@ -109,6 +116,12 @@ const ChecklistItem: React.FC<Props> = (props) => {
                             id={task.id}
                             title={task.title}
                             removeTask={removeTask}
+                            tagTaskInProgress={tagTaskInProgress}
+                            tagTaskNotInProgress={tagTaskNotInProgress}
+                            tagTaskComplete={tagTaskComplete}
+                            tagTaskIncomplete={tagTaskIncomplete}
+                            assignDueDate={assignDueDate}
+                            removeDueDate={removeDueDate}
                         />
                     ))) : "No current tasks!"}
                 </List>
@@ -127,9 +140,9 @@ const ChecklistItem: React.FC<Props> = (props) => {
                 </Box>
                 <Box display='flex' justifyContent="space-between" sx={{ pb: 2 }}>
                     {props.isFavorited == true ?
-                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleFavoriteSubmit} defaultChecked={true} />
-                        : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleUnfavoriteSubmit} />}
-                    <Button variant="contained">Archive</Button>
+                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleUnfavoriteSubmit} defaultChecked={true} />
+                        : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleFavoriteSubmit} />}
+                    <Button variant="contained" onClick={handleArchiveSubmit}>Archive</Button>
                 </Box>
             </Paper>
         </Grid>

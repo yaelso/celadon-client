@@ -4,15 +4,22 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import MoreTaskContextMenu from './MoreTaskContextMenu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { PatchDueDateRequestParams } from './taskActions';
 
 type Props = {
     id: number;
     title: string;
     removeTask: (id: number) => void;
+    tagTaskInProgress: (id: number) => void;
+    tagTaskNotInProgress: (id: number) => void;
+    tagTaskComplete: (id: number) => void;
+    tagTaskIncomplete: (id: number) => void;
+    assignDueDate: (id: number, params: PatchDueDateRequestParams) => void;
+    removeDueDate: (id: number) => void;
 };
 
 const TaskItem: React.FC<Props> = (props) => {
-    const { id, removeTask } = props;
+    const { id, removeTask, tagTaskInProgress, tagTaskNotInProgress, tagTaskComplete, tagTaskIncomplete, assignDueDate, removeDueDate } = props;
 
     // Anchors
     const [taskAnchorEl, setTaskAnchorEl] = React.useState<null | HTMLElement>(null);

@@ -9,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useLocalStorage } from '../../applicationState/hooks';
 import { deleteCategory, fetchCategories } from './categoryActions';
-import { PostTaskParams } from '../tasks/taskActions';
+import { PatchDueDateRequestParams, PostTaskParams } from '../tasks/taskActions';
 
 type Props = {
     id: number;
@@ -18,19 +18,26 @@ type Props = {
     removeCategory: (id: number) => void;
     tagChecklistFavorite: (id: number) => void;
     tagChecklistUnfavorite: (id: number) => void;
-    // tagChecklistArchive: (id: number) => void;
+    tagChecklistArchive: (id: number) => void;
     checklists: Checklist[];
     addChecklist: (params: PostChecklistParams) => void;
     removeChecklist: (id: number) => void;
     addTask: (params: PostTaskParams) => void;
     removeTask: (id: number) => void;
-    // tagTaskInProgress: (id: number) => void;
-    // tagTaskComplete: (id: number) => void;
-    // tagScheduleTask: (id: number) => void;
+    tagTaskInProgress: (id: number) => void;
+    tagTaskNotInProgress: (id: number) => void;
+    tagTaskComplete: (id: number) => void;
+    tagTaskIncomplete: (id: number) => void;
+    assignDueDate: (id: number, params: PatchDueDateRequestParams) => void;
+    removeDueDate: (id: number) => void;
 };
 
 const CategoryItem: React.FC<Props> = (props) => {
-    const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask, tagChecklistFavorite, tagChecklistUnfavorite } = props;
+    const { id, addChecklist, removeCategory, removeChecklist, addTask, removeTask,
+        tagChecklistFavorite, tagChecklistUnfavorite, tagChecklistArchive,
+        tagTaskInProgress, tagTaskNotInProgress, tagTaskComplete, tagTaskIncomplete,
+        assignDueDate, removeDueDate
+    } = props;
 
     // Params for a checklist to be posted if user opens POST form
     const [checklistTitle, setChecklistTitle] = useState<string | undefined>();
@@ -96,12 +103,15 @@ const CategoryItem: React.FC<Props> = (props) => {
                         removeChecklist={removeChecklist}
                         tagChecklistFavorite={tagChecklistFavorite}
                         tagChecklistUnfavorite={tagChecklistUnfavorite}
-                        // tagChecklistArchive={}
+                        tagChecklistArchive={tagChecklistArchive}
                         addTask={addTask}
                         removeTask={removeTask}
-                    // tagTaskInProgress={ }
-                    // tagTaskComplete={ }
-                    // tagScheduleTask={ }
+                        tagTaskInProgress={tagTaskInProgress}
+                        tagTaskNotInProgress={tagTaskNotInProgress}
+                        tagTaskComplete={tagTaskComplete}
+                        tagTaskIncomplete={tagTaskIncomplete}
+                        assignDueDate={assignDueDate}
+                        removeDueDate={removeDueDate}
                     />
                 ))) : "No current checklists!"}
             </Grid>
