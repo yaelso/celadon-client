@@ -15,3 +15,14 @@ export const postUser = (jwt: string) => {
     }
   );
 };
+
+
+export const fetchUsers = (jwt: string) => sendApiRequest<undefined, User[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().User,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+  },
+);
