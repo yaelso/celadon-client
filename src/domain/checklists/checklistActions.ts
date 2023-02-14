@@ -26,6 +26,16 @@ export const fetchArchivedChecklists = (jwt: string) => sendApiRequest<undefined
   },
 );
 
+export const fetchFavorites = (jwt: string) => sendApiRequest<undefined, Checklist[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().Checklists_GetFavorites,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  },
+);
+
 /**
  * The object containing all the data params necessary to complete the POST request...
  */
@@ -38,11 +48,12 @@ export type PostChecklistParams = PostRequestData;
  */
 
 type PostRequestBody = Omit<PostRequestData, 'category_id'>;
+type PostResponseData = { checklist: Checklist; };
 
 export const postChecklist = (jwt: string, requestData: PostRequestData) => {
   const { category_id, ...requestBody } = requestData;
 
-  return sendApiRequest<PostRequestBody, Checklist>(
+  return sendApiRequest<PostRequestBody, PostResponseData>(
     {
       method:  'POST',
       url: API_ROUTES().Checklists,
@@ -56,6 +67,50 @@ export const postChecklist = (jwt: string, requestData: PostRequestData) => {
     }
   );
 };
+
+type PatchResponseBody = {
+  checklist: Checklist;
+}
+
+export const favoriteChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Favorite(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const unfavoriteChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Unfavorite(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const archiveChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Archive(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const unarchiveChecklist = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Checklists_Unarchive(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
 
 type DeleteResponseBody = {
   details: string;

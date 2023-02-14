@@ -16,7 +16,9 @@ export const fetchCategories = (jwt: string) => sendApiRequest<undefined, Catego
 type PostRequestData = Pick<Category, 'title' | 'description'>
 export type PostCategoryParams = PostRequestData;
 
-export const postCategory = (jwt: string, requestBody: PostRequestData) => sendApiRequest<PostRequestData, Category>(
+type PostResponseData = { category: Category; };
+
+export const postCategory = (jwt: string, requestBody: PostRequestData) => sendApiRequest<PostRequestData, PostResponseData>(
   {
     method:  'POST',
     url: API_ROUTES().Categories,

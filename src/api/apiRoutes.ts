@@ -13,6 +13,7 @@ export const API_ROUTES = () => {
         Checklists_Unfavorite:   (id: number) => `${apiRoot}/checklists/${id}/unfavorite`,
         Checklists_Delete:       (id: number) => `${apiRoot}/checklists/${id}`,
         Tasks:                   `${apiRoot}/tasks`,
+        Tasks_DueDate:           `${apiRoot}/tasks/for_due_date`,
         Tasks_MarkComplete:      (id: number) => `${apiRoot}/tasks/${id}/mark_complete`,
         Tasks_MarkIncomplete:    (id: number) => `${apiRoot}/tasks/${id}/mark_incomplete`,
         Tasks_MarkInProgress:    (id: number) => `${apiRoot}/tasks/${id}/mark_in_progress`,
@@ -31,7 +32,8 @@ export const API_ROUTES = () => {
         UserPokemon_ResetExp:    (id: number) => `${apiRoot}/user_pokemon/${id}/reset_exp`,
         User:                    `${apiRoot}/user`,
         User_Get:                (id: number) => `${apiRoot}/user/${id}`,
-        User_SetActivePokemon:   (id: number) => `${apiRoot}/user/${id}/active_pokemon`,
+        User_Current:            `${apiRoot}/user/current`,
+        User_SetActivePokemon:   `${apiRoot}/user/active_pokemon`,
         User_Delete:             (id: number) => `${apiRoot}/user/${id}`,
     };
 };

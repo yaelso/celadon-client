@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { makeRoutes } from './routes';
 import Home from "../Home";
 import Profile from "../core/Profile";
@@ -22,7 +22,8 @@ export const AppRouter: React.FC = () => {
       <Route path={routes.Profile} element={<Profile />} />
       <Route path={routes.Pokedex} element={<Pokedex />} />
       <Route path={routes.Archive} element={<Archive />} />
-      <Route path={routes.Wildcard} element={<Home />} />
+      <Route path={routes.Root} element={<Home />} />
+      <Route path={routes.Wildcard} element={<Navigate to={routes.Root} replace />} />
     </Routes>
   );
 }

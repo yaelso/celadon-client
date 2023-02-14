@@ -27,6 +27,25 @@ export const postHabit = (jwt: string, requestBody: PostRequestData) => sendApiR
   },
 );
 
+
+type PatchHabitRequestData = Pick<Habit, 'reps'>;
+export type PatchHabitRequestParams = PatchHabitRequestData;
+
+type PatchResponseBody = {
+  habit: Habit;
+}
+
+export const patchHabitReps = (jwt: string, id: number, requestData: PatchHabitRequestData) => sendApiRequest<PatchHabitRequestData, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Habits_UpdateReps(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    data: requestData
+  }
+)
+
 type DeleteResponseBody = {
   details: string;
 }

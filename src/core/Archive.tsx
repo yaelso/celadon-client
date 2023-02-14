@@ -1,32 +1,138 @@
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import { Box, Breadcrumbs, Button, Checkbox, Grid, IconButton, Link, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
+import { Box, Breadcrumbs, CssBaseline, Grid, Link, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
-import { fetchArchivedChecklists } from '../domain/checklists/checklistActions';
+import ArchivedChecklistItem from '../domain/checklists/ArchivedChecklistItem';
+import { archiveChecklist, deleteChecklist, fetchArchivedChecklists, unarchiveChecklist } from '../domain/checklists/checklistActions';
+import { Checklist } from '../domain/checklists/models';
+import { Task } from '../domain/tasks/models';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 
-const Archive: React.FC = () => {
-  const snackbar = useSnackbar();
 
-  const [archivedChecklists, setArchivedChecklists] = useState(undefined);
+type FlatChecklist = Omit<Checklist, 'tasks'>;
+
+const Archive: React.FC = () => {
+  const routes = makeRoutes();
+  const snackbar = useSnackbar();
 
   const [jwt, _] = useLocalStorage('authToken');
 
-  // API callbacks
-  const fetchAllArchivedChecklists = () => fetchArchivedChecklists(jwt)
-    .then(data => setArchivedChecklists(data))
-    .catch(() => snackbar.enqueueSnackbar('Archive fetch failed!', { variant: 'error' }));
+  const [archivedChecklists, setArchivedChecklists] = useState<FlatChecklist[] | undefined>(undefined);
+  const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
 
-  const routes = makeRoutes();
+  const tasksByChecklistId = useMemo(
+    () => (tasks ?? []).reduce(
+      (acc, task) => {
+        const tasksForChecklist = acc[`${task.checklist_id}`] ?? [];
+        return { ...acc, [`${task.checklist_id}`]: tasksForChecklist.concat([task]) };
+      },
+      {},
+    ), [tasks],
+  );
+
+  const checklistsByCategoryId = useMemo(
+    () => (archivedChecklists ?? []).reduce(
+      (acc, checklist) => {
+        const checklistsForCategory = acc[`${checklist.category_id}`] ?? [];
+        return {
+          ...acc,
+          [`${checklist.category_id}`]: checklistsForCategory.concat([
+            {
+              ...checklist,
+              tasks: (tasksByChecklistId[`${checklist.id}`] ?? []),
+            },
+          ]),
+        };
+      },
+      {},
+    ),
+    [archivedChecklists, tasksByChecklistId],
+  );
+
+  // API callbacks
+
+  const fetchAllArchivedChecklists = useCallback(
+    () => fetchArchivedChecklists(jwt)
+      .then(res => {
+        const archivedChecklists = res.data ?? [];
+
+        const flatChecklists: FlatChecklist[] = archivedChecklists.map(checklist => {
+          const { tasks, ...flatChecklist } = checklist;
+          return flatChecklist;
+        });
+
+        setArchivedChecklists(flatChecklists);
+
+        const tasks = archivedChecklists.map(checklist => checklist.tasks ?? []).flat();
+
+        // Let's never, ever do that again
+        setTasks(tasks);
+      })
+      .catch(() => snackbar.enqueueSnackbar('Archived checklists fetch failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchArchiveChecklist = useCallback(
+    (id: number) => archiveChecklist(jwt, id)
+      .then(res => {
+        const newChecklist = res.data.checklist;
+
+        setArchivedChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
+        snackbar.enqueueSnackbar('Checklist archived', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist archive attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchUnarchiveChecklist = useCallback(
+    (id: number) => unarchiveChecklist(jwt, id)
+      .then(res => {
+        const newChecklist = res.data.checklist;
+
+        setArchivedChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
+        snackbar.enqueueSnackbar('Checklist unarchived', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist unarchive attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const deleteChecklistById = useCallback(
+    (id: number) => deleteChecklist(jwt, id)
+      .then(res => {
+        setArchivedChecklists((prev) => prev.filter((newList) => {
+          return newList.id !== id;
+        }))
+        snackbar.enqueueSnackbar('Checklist deleted', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist deletion failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  useEffect(
+    () => {
+      if (!archivedChecklists) {
+        fetchAllArchivedChecklists();
+      }
+    },
+    [archivedChecklists, fetchAllArchivedChecklists],
+  );
 
   return (
     <AppLayout>
+      <CssBaseline />
       <Box>
-        <Breadcrumbs sx={{pt: 5}}>
+        <Breadcrumbs sx={{ pt: 5 }}>
           <Link underline="hover" color="inherit" href={routes.Root}>
             Home
           </Link>
@@ -37,45 +143,20 @@ const Archive: React.FC = () => {
         </Breadcrumbs>
       </Box>
       <Box>
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
-        <Grid item >
-          <Paper sx={{ pl: 3, pr: 3 }}>
-            <Box display="grid" justifyContent="space-between">
-              <Typography sx={{pt: 2, pb: 1}} textAlign='left'>
-                List Title
-              </Typography>
-              <IconButton sx={{ gridColumn: 3}}><MoreHorizRoundedIcon/></IconButton>
-              <Typography sx={{ fontSize: '.9em', pb: 3}}>
-                List description
-              </Typography>
-            </Box>
-              <List sx={{
-                pb: 3,
-              }}>
-                <ListItem divider={true}>
-                  <Checkbox size="small" disabled />
-                  <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
-                      <Typography variant="body2">
-                        A sample task title
-                      </Typography>
-                  </ListItemText>
-                  <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
-                </ListItem>
-                <ListItem divider={true}>
-                  <Checkbox size="small" disabled />
-                  <ListItemText sx={{ pl: 1, pr: 2}} disableTypography={false}>
-                      <Typography variant="body2">
-                        A sample task title
-                      </Typography>
-                  </ListItemText>
-                  <Checkbox icon={<CheckCircleOutlineRoundedIcon/>} checkedIcon={<CheckCircleRoundedIcon/>} size="small" disabled/>
-                </ListItem>
-              </List>
-              <Box display='flex' justifyContent="center" sx={{ pb: 2}}>
-                <Button variant="contained">Unarchive</Button>
-              </Box>
-            </Paper>
-          </Grid>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
+          {!!archivedChecklists?.length ? (archivedChecklists.map((checklist) => (
+            <ArchivedChecklistItem
+              key={`checklist-${checklist.id}`}
+              id={checklist.id}
+              title={checklist.title}
+              description={checklist.description}
+              isArchived={checklist.is_archived}
+              tasks={tasks}
+              removeChecklist={deleteChecklistById}
+              tagChecklistArchive={patchArchiveChecklist}
+              tagChecklistUnarchive={patchUnarchiveChecklist}
+            />
+          ))) : "No currently archived checklists!"}
         </Grid>
       </Box>
     </AppLayout>

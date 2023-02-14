@@ -16,6 +16,21 @@ export const fetchTasks = (jwt: string, checklistId: number) => sendApiRequest<u
   },
 );
 
+type DueDateFetchRequestData = Pick<Task, 'due_date'>;
+export type TaskWithDueDateFetchParams = DueDateFetchRequestData;
+
+export const fetchTasksWithDueDate = (jwt: string, dueDate: DueDateFetchRequestData) => sendApiRequest<undefined, Task[]>(
+  {
+    method:  'GET',
+    url:     API_ROUTES().Tasks_DueDate,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    params: {
+      "due_date": dueDate,
+    }
+  },
+);
 
 /**
  * The object containing all the data params necessary to complete the POST request...
@@ -29,11 +44,12 @@ export type PostTaskParams = PostRequestData;
  */
 
 type PostRequestBody = Omit<PostRequestData, 'checklist_id'>;
+type PostResponseBody = { task: Task; };
 
 export const postTask = (jwt: string, requestData: PostRequestData) => {
   const { checklist_id, ...requestBody } = requestData;
 
-  return sendApiRequest<PostRequestBody, Task>(
+  return sendApiRequest<PostRequestBody, PostResponseBody>(
     {
       method:  'POST',
       url: API_ROUTES().Tasks,
@@ -47,6 +63,74 @@ export const postTask = (jwt: string, requestData: PostRequestData) => {
     },
   )
 };
+
+type PatchResponseBody = {
+  task: Task;
+}
+
+export const markTaskInProgress = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkInProgress(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskNotInProgress = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkNotInProgress(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskComplete = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkComplete(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+export const markTaskIncomplete = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_MarkIncomplete(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
+
+type PatchDueDateRequestData = Pick<Task, 'due_date'>;
+export type PatchDueDateRequestParams = PatchDueDateRequestData;
+
+export const setTaskDueDate = (jwt: string, id: number, requestData: PatchDueDateRequestData) => sendApiRequest<PatchDueDateRequestData, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_SetDueDate(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    data: requestData,
+  }
+)
+
+export const clearTaskDueDate = (jwt: string, id: number) => sendApiRequest<undefined, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url: API_ROUTES().Tasks_ClearDueDate(id),
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    }
+  }
+)
 
 type DeleteResponseBody = {
   details: string;

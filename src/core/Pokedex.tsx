@@ -1,11 +1,16 @@
-import { Box, Breadcrumbs, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
+import { Box, Breadcrumbs, CssBaseline, Grid, Link, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
-import { fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
+import { UserPokemon, PokemonViewModel } from '../domain/userPokemon/models';
+import UserPokemonItem from '../domain/userPokemon/UserPokemonItem';
+import { fetchUserPokemon, postUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
+import { PokemonClient, Pokemon } from 'pokenode-ts';
+import { PatchActivePokemonRequestParams, updateActivePokemon } from '../domain/users/userActions';
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -19,20 +24,94 @@ const Pokedex: React.FC = () => {
   const routes = makeRoutes();
 
   const snackbar = useSnackbar();
-
-  const [userPokemon, setUserPokemon] = useState(undefined);
-
   const [jwt, _] = useLocalStorage('authToken');
 
+  const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+  const [pokeNodePokemon, setPokenodePokemon] = useState<Pokemon[] | undefined>(undefined);
+  const [activePokemonId, setActivePokemonId] = useState<number | undefined>(undefined);
+  const [activePokemon, setActivePokemon] = useState<UserPokemon | undefined>(undefined);
+
+
+  const addPokenodePokemon = useCallback(
+    (pk: Pokemon) => setPokenodePokemon(prev => (prev ?? []).concat([pk])),
+    [setPokenodePokemon],
+  );
+
+  const pokemonViewModels: PokemonViewModel[] = useMemo(
+    () => (userPokemon ?? []).map(pk => {
+      const pokeNodeObj = (pokeNodePokemon ?? []).find(p => p.name == pk.pokemon.name.toLowerCase());
+
+      return {
+        id: pk.pokemon_id,
+        exp: pk.exp,
+        name: pokeNodeObj?.name ?? '',
+        weight: pokeNodeObj?.weight ?? 0,
+        height: pokeNodeObj?.height ?? 0,
+        sprite: pokeNodeObj?.sprites?.front_default ?? '',
+        types: pokeNodeObj?.types ?? [],
+      };
+    }),
+    [pokeNodePokemon, userPokemon],
+  );
+  console.log(pokemonViewModels);
+
+  const pokeNodeApi = useMemo(() => new PokemonClient(), []);
+
   // API callbacks
-  const fetchAllUserPokemon = () => fetchUserPokemon(jwt)
-    .then(data => setUserPokemon(data))
-    .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+  const fetchAllUserPokemon = useCallback(
+    () => {
+      fetchUserPokemon(jwt)
+        .then(res => {
+          const userPokeObjs = res.data;
+
+          setUserPokemon(userPokeObjs);
+        })
+        .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
+  const fetchPokeNodeData = useCallback(
+    (pokemonName: string) => {
+      pokeNodeApi.getPokemonByName(pokemonName.toLowerCase())
+        .then(pk => addPokenodePokemon(pk))
+        .catch(
+          err => snackbar
+            .enqueueSnackbar(
+              'An error occurred while fetching your Pokemon data - please try again later!',
+              { variant: 'error' },
+            ),
+        );
+    },
+    [addPokenodePokemon, pokeNodeApi, snackbar],
+  );
+
+  const designateActivePokemon = useCallback(
+    (params: PatchActivePokemonRequestParams) => updateActivePokemon(jwt, params)
+      .then(res => {
+        const newActivePokemonId = res.data.user.active_pokemon_id;
+        setActivePokemonId(newActivePokemonId);
+        snackbar.enqueueSnackbar('New Pokemon active!', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Active Pokemon update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  useEffect(fetchAllUserPokemon, []);
+
+  useEffect(
+    () => {
+      const pokemonNames = (userPokemon ?? []).map(p => p.pokemon.name);
+      pokemonNames.forEach((name) => fetchPokeNodeData(name));
+    },
+    [userPokemon],
+  );
 
   return (
     <AppLayout>
+      <CssBaseline />
       <Box>
-        <Breadcrumbs sx={{pt: 5}}>
+        <Breadcrumbs sx={{ pt: 5 }}>
           <Link underline="hover" color="inherit" href={routes.Root}>
             Home
           </Link>
@@ -42,49 +121,18 @@ const Pokedex: React.FC = () => {
           <Typography color="text.primary">Pokedex</Typography>
         </Breadcrumbs>
       </Box>
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12}} sx={{pt: 5, justifyContent: 'center'}}>
-        <Grid item sx={{
-          p: 4,
-          textAlign: 'center'
-        }}
-        xs={3}
-        >
-          <Item>
-            <img src={localStorage.getItem("profilePic")} alt="Pokemon"/>
-            <Typography sx={{ pt: 1, pb: 1 }}>Bulbasaur</Typography>
-            <Divider />
-            <Typography sx={{ pt: 1, pb: 2, fontSize: 17 }}>10 EXP</Typography>
-            <Switch />
-          </Item>
-        </Grid>
-        <Grid item sx={{
-          p: 4,
-          textAlign: 'center'
-        }}
-        xs={3}
-        >
-          <Item>
-            <img src={localStorage.getItem("profilePic")} alt="Pokemon"/>
-            <Typography sx={{pt: 1, pb: 1}}>Charmander</Typography>
-            <Divider />
-            <Typography sx={{ pt: 1, pb: 2, fontSize: 17 }}>30 EXP</Typography>
-            <Switch />
-          </Item>
-        </Grid>
-        <Grid item sx={{
-          p: 4,
-          textAlign: 'center'
-        }}
-        xs={3}
-        >
-          <Item>
-            <img src={localStorage.getItem("profilePic")} alt="Pokemon"/>
-            <Typography sx={{ pt: 1, pb: 1 }}>Squirtle</Typography>
-            <Divider />
-            <Typography sx={{ pt: 1, pb: 2, fontSize: 17 }}>50 EXP</Typography>
-            <Switch defaultChecked />
-          </Item>
-        </Grid>
+      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
+        {
+          !!pokemonViewModels?.length
+            ? (pokemonViewModels.map(
+              (pokemon) => (
+                <UserPokemonItem
+                  key={`userPokemon-${pokemon.id}`}
+                  {...pokemon}
+                />))
+            )
+            : <span>'No current Pokemon!'</span>
+        }
       </Grid>
     </AppLayout>
   )
