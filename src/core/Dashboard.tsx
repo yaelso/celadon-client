@@ -11,7 +11,8 @@ import { archiveChecklist, deleteChecklist, favoriteChecklist, postChecklist, Po
 import { Checklist } from '../domain/checklists/models';
 import { Task } from '../domain/tasks/models';
 import { clearTaskDueDate, deleteTask, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, postTask, PostTaskParams, setTaskDueDate } from '../domain/tasks/taskActions';
-import { addExpToPokemon } from '../domain/userPokemon/userPokemonActions';
+import { UserPokemon } from '../domain/userPokemon/models';
+import { addExpToPokemon, fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import { User } from '../domain/users/models';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -33,6 +34,8 @@ const Dashboard: React.FC = (props) => {
   const [categories, setCategories] = useState<FlatCategory[] | undefined>(undefined);
   const [checklists, setChecklists] = useState<FlatChecklist[] | undefined>(undefined);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
+
+  const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
 
   // Params for a category to be posted if user opens POST form
   const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
@@ -78,6 +81,47 @@ const Dashboard: React.FC = (props) => {
     ), [categories, checklistsByCategoryId]
   );
 
+
+  // region Pokemon API callbacks and handlers
+  const fetchAllUserPokemon = useCallback(
+    () => {
+      fetchUserPokemon(jwt)
+        .then(res => {
+          const userPokeObjs = res.data;
+
+          setUserPokemon(userPokeObjs);
+        })
+        .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
+  const addActivePokemonExp = useCallback(
+    () => {
+      if (!user?.active_pokemon_id) {
+        console.log('User is undefined or has no active pokemon - bailing out of exp add');
+        return;
+      }
+
+      const expAward = BASE_POKEMON_EXP_AWARD;
+
+      addExpToPokemon(jwt, { pokemon_id: user?.active_pokemon_id ?? 0, exp: expAward })
+        .then(res => {
+          const activeUserPokemon = res.data['user_pokemon'];
+
+          activeUserPokemon.exp = expAward;
+          setUserPokemon(activeUserPokemon);
+
+          snackbar.enqueueSnackbar(`Your active pokemon was awarded ${expAward} EXP!`, { variant: 'success' });
+        })
+        .catch(() => snackbar.enqueueSnackbar('Failed to award EXP to active pokemon!', { variant: 'error' }));
+    },
+    [jwt, snackbar, user],
+  );
+
+  // end region
+
+
   // region Category API callbacks & handlers
 
   const fetchAllCategories = useCallback(
@@ -119,11 +163,11 @@ const Dashboard: React.FC = (props) => {
         setCategories(prev => [flatCategory].concat(prev));
         snackbar.enqueueSnackbar('Category successfully created!', { variant: 'success' });
       })
-      // .then(addActivePokemonExp)
+      .then(addActivePokemonExp)
       .catch(() => snackbar.enqueueSnackbar('Category creation failed!', { variant: 'error' }));
   },
-    // [addActivePokemonExp, jwt, snackbar],
-    [jwt, snackbar],
+    [addActivePokemonExp, jwt, snackbar],
+    // [jwt, snackbar],
   );
 
   const deleteCategoryById = useCallback(
@@ -275,7 +319,7 @@ const Dashboard: React.FC = (props) => {
         })
         .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
     },
-    [jwt, snackbar],
+    [jwt, snackbar, addActivePokemonExp],
   );
 
   const patchTaskInProgress = useCallback(
@@ -292,7 +336,7 @@ const Dashboard: React.FC = (props) => {
         snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
-    [jwt, snackbar],
+    [jwt, snackbar, addActivePokemonExp],
   );
 
   const patchTaskNotInProgress = useCallback(
@@ -326,7 +370,7 @@ const Dashboard: React.FC = (props) => {
         snackbar.enqueueSnackbar('Task marked complete', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
-    [jwt, snackbar],
+    [jwt, snackbar, addActivePokemonExp],
   );
 
   const patchTaskIncomplete = useCallback(
@@ -394,32 +438,6 @@ const Dashboard: React.FC = (props) => {
 
   // end region
 
-  // region Pokemon API callbacks and handlers
-  const addActivePokemonExp = useCallback(
-    () => {
-      if (!user?.active_pokemon_id) {
-        console.log('User is undefined or has no active pokemon - bailing out of exp add');
-        return;
-      }
-
-      const expAward = BASE_POKEMON_EXP_AWARD;
-
-      addExpToPokemon(jwt, { pokemon_id: user?.active_pokemon_id ?? 0, exp: expAward })
-        .then(res => {
-          const userPokemon = res.data['user pokemon'];
-
-          console.log(`Awarded ${userPokemon.exp}`);
-
-          snackbar.enqueueSnackbar(`Your active pokemon was awarded ${expAward} EXP!`, { variant: 'success' });
-        })
-        .catch(() => snackbar.enqueueSnackbar('Failed to award EXP to active pokemon!', { variant: 'error' }));
-    },
-    [jwt, snackbar, user],
-  );
-
-  // end region
-
-
   useEffect(
     () => {
       if (!categories) {
@@ -428,6 +446,15 @@ const Dashboard: React.FC = (props) => {
     },
     [categories, fetchAllCategories],
   );
+
+  useEffect(
+    () => {
+      if (!userPokemon) {
+        fetchAllUserPokemon();
+      }
+    },
+    [userPokemon, fetchAllUserPokemon]
+  )
 
   return (
     <AppLayout>

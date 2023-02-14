@@ -32,10 +32,7 @@ export type PatchPokmeonExpRequestParams = PatchExpRequestData;
 type PatchExpRequestBody = Pick<PatchExpRequestData, 'exp'>;
 type PatchExpResponseBody = { 'user pokemon': UserPokemon };
 
-export const addExpToPokemon = (
-  jwt: string,
-  params: PatchExpRequestData,
-) => {
+export const addExpToPokemon = (jwt: string, params: PatchExpRequestData) => {
   const { pokemon_id, ...requestBody } = params;
 
   return sendApiRequest<PatchExpRequestBody, PatchExpResponseBody>(

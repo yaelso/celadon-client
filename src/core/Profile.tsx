@@ -6,8 +6,9 @@ import UserCalendar from "../domain/calendar/Calendar";
 import { deleteChecklist, fetchFavorites } from "../domain/checklists/checklistActions";
 import FavoritedChecklistItem from "../domain/checklists/FavoritedChecklistItem";
 import { Checklist } from "../domain/checklists/models";
-import { fetchHabits, postHabit, PostHabitParams } from "../domain/habits/habitActions";
+import { fetchHabits, patchHabitReps, PatchHabitRequestParams, postHabit, PostHabitParams } from "../domain/habits/habitActions";
 import HabitItem from "../domain/habits/HabitItem";
+import { Habit } from "../domain/habits/models";
 import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
 import { Task } from "../domain/tasks/models";
 import ScheduledTaskItem from "../domain/tasks/ScheduledTaskItem";
@@ -25,11 +26,10 @@ const Profile: React.FC = () => {
 
   const [jwt, _] = useLocalStorage('authToken');
 
-  const [habits, setHabits] = useState(undefined);
+  const [habits, setHabits] = useState<Habit[] | undefined>(undefined);
   const [favoriteChecklists, setFavoriteChecklists] = useState<FlatChecklist[] | undefined>(undefined);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
   const [scheduledTasks, setScheduledTasks] = useState<Task[] | undefined>(undefined);
-  const [calendar, setCalendar] = useState<undefined | undefined>(undefined);
   const [activeUserPokemon, setactiveUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
 
   // Params for a checklist to be posted if user opens POST form
@@ -75,12 +75,29 @@ const Profile: React.FC = () => {
       postHabit(jwt, params)
         .then(res => {
           const newHabits = [...habits, res.data]
-          setTasks(newHabits)
+          setHabits(newHabits)
           fetchAllHabits();
           snackbar.enqueueSnackbar('Habit successfully created!', { variant: 'success' });
         })
         .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
     },
+    [jwt, snackbar],
+  );
+
+  const updateHabitReps = useCallback(
+    (id: number, params: PatchHabitRequestParams) => patchHabitReps(jwt, id, params)
+      .then(res => {
+        const newHabit = res.data.habit;
+
+        setHabits((prev) => {
+          const oldHabitIndex = prev.findIndex(p => p.id === newHabit.id);
+          return prev.slice(0, oldHabitIndex)
+            .concat([newHabit])
+            .concat(prev.slice(oldHabitIndex + 1));
+        });
+        snackbar.enqueueSnackbar('Habit reps updated!', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Habit reps update attempt failed!', { variant: 'error' })),
     [jwt, snackbar],
   );
 
@@ -332,7 +349,10 @@ const Profile: React.FC = () => {
                   {!!habits?.length ? (habits.map((habit) => (
                     <HabitItem
                       key={`habit-${habit.id}`}
+                      id={habit.id}
                       title={habit.title}
+                      reps={habit.reps}
+                      updateReps={updateHabitReps}
                     />
                   ))) : "No current habits!"}
                 </List>
@@ -341,7 +361,7 @@ const Profile: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      <Box>
+      <Box sx={{ pb: 5 }}>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Schedule"}
         </Typography>
@@ -351,18 +371,18 @@ const Profile: React.FC = () => {
           />
         ))) : "No currently scheduled tasks!"}
       </Box>
-      <Box>
+      <Box sx={{ pb: 5 }}>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Calendar"}
         </Typography>
         <UserCalendar />
       </Box>
-      <Box>
+      {/* <Box>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Active Pokemon"}
         </Typography>
-      </Box>
-      <Box>
+      </Box> */}
+      <Box sx={{ pb: 5 }}>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Favorite Checklists"}
         </Typography>
