@@ -148,7 +148,7 @@ const Home: React.FC = () => {
               flexDirection: "row",
             }}
           >
-            <Card sx={{ width: 300, minWidth: 300 }} >
+            <Card sx={{ width: 300, minWidth: 300, maxHeight: 450 }} >
               <CardMedia
                 component="img"
                 height="300"

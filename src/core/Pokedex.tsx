@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
+import { Box, Breadcrumbs, CssBaseline, Divider, Grid, Link, Paper, Switch, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -32,6 +32,7 @@ const Pokedex: React.FC = () => {
 
   return (
     <AppLayout>
+      <CssBaseline />
       <Box>
         <Breadcrumbs sx={{ pt: 5 }}>
           <Link underline="hover" color="inherit" href={routes.Root}>
