@@ -2,18 +2,18 @@ import { Box, Breadcrumbs, Button, CssBaseline, Fab, Grid, Link, List, Paper, To
 import { useSnackbar } from "notistack";
 import React, { useCallback, useEffect, useState } from "react";
 import { useLocalStorage } from "../applicationState/hooks";
-import { fetchFavorites } from "../domain/checklists/checklistActions";
+import { deleteChecklist, fetchFavorites } from "../domain/checklists/checklistActions";
 import FavoritedChecklistItem from "../domain/checklists/FavoritedChecklistItem";
 import { Checklist } from "../domain/checklists/models";
-import { deleteHabit, fetchHabits, postHabit } from "../domain/habits/habitActions";
+import { deleteHabit, fetchHabits, postHabit, PostHabitParams } from "../domain/habits/habitActions";
 import HabitItem from "../domain/habits/HabitItem";
 import { Task } from "../domain/tasks/models";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import AddIcon from '@mui/icons-material/Add';
-import PostChecklistFormDialog from "../domain/checklists/PostChecklistFormDialog";
 import { UserPokemon } from "../domain/userPokemon/models";
+import { clearTaskDueDate, deleteTask, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate } from "../domain/tasks/taskActions";
+import UserCalendar from "../domain/calendar/Calendar";
+import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
 
 
 type FlatChecklist = Omit<Checklist, 'tasks'>;
@@ -30,6 +30,15 @@ const Profile: React.FC = () => {
   const [scheduledTasks, setScheduledTasks] = useState<Task[] | undefined>(undefined);
   const [calendar, setCalendar] = useState<undefined | undefined>(undefined);
   const [activeUserPokemon, setactiveUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+
+  // Params for a checklist to be posted if user opens POST form
+  const [habitTitle, setHabitTitle] = useState<string | undefined>();
+
+  // Post checklist form dialog toggle
+  const [createHabitOpen, setCreateHabitOpen] = useState(false);
+
+  const [habitAnchorEl, setHabitAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openHabit = Boolean(habitAnchorEl);
 
   const today = new Date().toJSON().slice(0, 10);
 
@@ -60,12 +69,20 @@ const Profile: React.FC = () => {
     [jwt, snackbar],
   );
 
-  // const postNewHabit = () => postHabit(jwt)
-  //   .then(res => {
-  //     setHabits(prev => [res.data.habit].concat(prev));
-  //     snackbar.enqueueSnackbar('Habit successfully created!', { variant: 'success' });
-  //   })
-  //   .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
+  const postNewHabit = useCallback(
+    (params: PostHabitParams) => {
+      postHabit(jwt, params)
+        .then(res => {
+          const newHabits = [...habits, res.data]
+          setTasks(newHabits)
+          fetchAllHabits();
+          snackbar.enqueueSnackbar('Habit successfully created!', { variant: 'success' });
+        })
+        .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
 
   // const deleteHabitById = (id: number) => deleteHabit(jwt, id)
   //   .then(data => {
@@ -73,6 +90,28 @@ const Profile: React.FC = () => {
   //     snackbar.enqueueSnackbar('Habit deleted', { variant: 'success' });
   //   })
   //   .catch(() => snackbar.enqueueSnackbar('Habit creation failed!', { variant: 'error' }));
+
+  const handleCreateHabitOpen = useCallback(
+    () => {
+      setCreateHabitOpen(true);
+    },
+    [setCreateHabitOpen],
+  );
+
+  const handleCreateHabitClose = useCallback(
+    () => {
+      setCreateHabitOpen(false);
+    },
+    [setCreateHabitOpen],
+  );
+
+  const handleCreateHabitSubmit = useCallback(
+    () => {
+      postNewHabit({ title: habitTitle });
+      setCreateHabitOpen(false);
+    },
+    [postNewHabit, habitTitle, setCreateHabitOpen],
+  );
 
   useEffect(
     () => {
@@ -103,21 +142,144 @@ const Profile: React.FC = () => {
 
   // useEffect(
   //   () => {
-  //     if (!calendar) {
-  //       fetchCalendar();
-  //     }
-  //   },
-  //   [],
-  // );
-
-  // useEffect(
-  //   () => {
   //     if (!activeUserPokemon) {
   //       fetchActiveUserPokemon();
   //     }
   //   },
   //   [],
   // );
+
+  const deleteChecklistById = useCallback(
+    (id: number) => deleteChecklist(jwt, id)
+      .then(res => {
+        setFavoriteChecklists((prev) => prev.filter((newList) => {
+          return newList.id !== id;
+        }))
+        snackbar.enqueueSnackbar('Checklist deleted', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist deletion failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskInProgress = useCallback(
+    (id: number) => markTaskInProgress(jwt, id)
+      .then(res => {
+        const progress = res.data.task.in_progress;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, in_progress: progress }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskNotInProgress = useCallback(
+    (id: number) => markTaskNotInProgress(jwt, id)
+      .then(res => {
+        const progress = res.data.task.in_progress;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, in_progress: progress }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked not in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskComplete = useCallback(
+    (id: number) => markTaskComplete(jwt, id)
+      .then(res => {
+        const completion_status = res.data.task.is_complete;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, is_complete: completion_status }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked complete', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskIncomplete = useCallback(
+    (id: number) => markTaskIncomplete(jwt, id)
+      .then(res => {
+        const completion_status = res.data.task.is_complete;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, is_complete: completion_status }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskDueDate = useCallback(
+    (id: number, params: PatchDueDateRequestParams) => setTaskDueDate(jwt, id, params)
+      .then(res => {
+        const deadline = res.data.task.due_date;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, due_date: deadline }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task due date set', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const removeDueDate = useCallback(
+    (id: number) => clearTaskDueDate(jwt, id)
+      .then(res => {
+        const deadline = res.data.task.due_date;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, due_date: deadline }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task due date cleared', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const deleteTaskById = useCallback(
+    (id: number) => deleteTask(jwt, id)
+      .then(res => {
+        setTasks((prev) => prev.filter((newTask) => {
+          return newTask.id !== id;
+        }))
+        snackbar.enqueueSnackbar('Task deleted', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task deletion failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
 
   return (
     <AppLayout>
@@ -151,14 +313,13 @@ const Profile: React.FC = () => {
           <Typography variant="h5" sx={{ pt: 2, pr: 3 }}>
             {"Habits"}
           </Typography>
-          <Button variant="contained" size="small">Add a Habit</Button>
-          {/* <PostHabitFormDialog
-                open={createChecklistOpen}
-                onClose={handleCreateChecklistClose}
-                onClickSubmit={handleCreateChecklistSubmit}
-                onChangeTitle={setChecklistTitle}
-                onChangeDesc={setChecklistDesc}
-            /> */}
+          <Button variant="contained" size="small" onClick={handleCreateHabitOpen}>Add a Habit</Button>
+          <PostHabitFormDialog
+            open={createHabitOpen}
+            onClose={handleCreateHabitClose}
+            onClickSubmit={handleCreateHabitSubmit}
+            onChangeTitle={setHabitTitle}
+          />
         </Box>
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'flex-start' }}>
           <Grid item sx={{ minWidth: 300, minHeight: 300 }}>
@@ -196,6 +357,7 @@ const Profile: React.FC = () => {
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Calendar"}
         </Typography>
+        <UserCalendar />
       </Box>
       <Box>
         <Typography variant="h5" sx={{ pt: 2 }}>
@@ -206,13 +368,22 @@ const Profile: React.FC = () => {
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Favorite Checklists"}
         </Typography>
-        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, pb: 20, justifyContent: 'center' }}>
           {!!favoriteChecklists?.length ? (favoriteChecklists.map((checklist) => (
             <FavoritedChecklistItem
               key={`favchecklist-${checklist.id}`}
+              id={checklist.id}
               title={checklist.title}
               description={checklist.description}
-            // tasks={checklist.tasks}
+              tasks={tasks}
+              removeChecklist={deleteChecklistById}
+              removeTask={deleteTaskById}
+              tagTaskInProgress={patchTaskInProgress}
+              tagTaskNotInProgress={patchTaskNotInProgress}
+              tagTaskComplete={patchTaskComplete}
+              tagTaskIncomplete={patchTaskIncomplete}
+              assignDueDate={patchTaskDueDate}
+              removeDueDate={removeDueDate}
             />
           ))) : "No current favorites!"}
         </Grid>
