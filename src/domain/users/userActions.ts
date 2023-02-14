@@ -1,6 +1,7 @@
 import { User } from './models';
 import { API_ROUTES } from '../../api/apiRoutes';
 import { sendApiRequest } from '../../api/module';
+import { UserPokemon } from '../userPokemon/models';
 
 
 type PostResponseSuccessData = { user: User; }
@@ -44,3 +45,21 @@ export const fetchCurrentUser = (jwt: string) => sendApiRequest<undefined, Fetch
     },
   },
 );
+
+type PatchActivePokemonRequestData = Pick<User, 'active_pokemon_id'>;
+export type PatchActivePokemonRequestParams = PatchActivePokemonRequestData;
+
+type PatchResponseBody = {
+  user: User;
+}
+
+export const updateActivePokemon = (jwt: string, requestData: PatchActivePokemonRequestData) => sendApiRequest<PatchActivePokemonRequestData, PatchResponseBody>(
+  {
+    method: 'PATCH',
+    url:  API_ROUTES().User_SetActivePokemon,
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+    },
+    data: requestData,
+  }
+)

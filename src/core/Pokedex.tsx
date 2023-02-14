@@ -5,10 +5,11 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
 import { UserPokemon, PokemonViewModel } from '../domain/userPokemon/models';
 import UserPokemonItem from '../domain/userPokemon/UserPokemonItem';
-import { fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
+import { fetchUserPokemon, postUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 import { PokemonClient, Pokemon } from 'pokenode-ts';
+import { PatchActivePokemonRequestParams, updateActivePokemon } from '../domain/users/userActions';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -27,6 +28,7 @@ const Pokedex: React.FC = () => {
 
   const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
   const [pokeNodePokemon, setPokenodePokemon] = useState<Pokemon[] | undefined>(undefined);
+  const [activePokemonId, setActivePokemonId] = useState<number | undefined>(undefined);
 
   const addPokenodePokemon = useCallback(
     (pk: Pokemon) => setPokenodePokemon(prev => (prev ?? []).concat([pk])),
@@ -80,6 +82,18 @@ const Pokedex: React.FC = () => {
         );
     },
     [addPokenodePokemon, pokeNodeApi, snackbar],
+  );
+
+  const designateActivePokemon = useCallback(
+    (params: PatchActivePokemonRequestParams) => updateActivePokemon(jwt, params)
+      .then(res => {
+        const newActivePokemon = res.data.user.active_pokemon_id;
+
+        setActivePokemonId(newActivePokemon);
+        snackbar.enqueueSnackbar('New Pokemon active!', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Active Pokemon update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
   );
 
   useEffect(fetchAllUserPokemon, []);
