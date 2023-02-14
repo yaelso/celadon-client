@@ -33,7 +33,7 @@ export const API_ROUTES = () => {
         User:                    `${apiRoot}/user`,
         User_Get:                (id: number) => `${apiRoot}/user/${id}`,
         User_Current:            `${apiRoot}/user/current`,
-        User_SetActivePokemon:   (id: number) => `${apiRoot}/user/${id}/active_pokemon`,
+        User_SetActivePokemon:   `${apiRoot}/user/active_pokemon`,
         User_Delete:             (id: number) => `${apiRoot}/user/${id}`,
     };
 };
