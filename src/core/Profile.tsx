@@ -1,6 +1,7 @@
 import { Box, Breadcrumbs, Button, CssBaseline, Grid, Link, List, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useCallback, useEffect, useState } from "react";
+import { Pokemon, PokemonClient } from "pokenode-ts";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "../applicationState/hooks";
 import UserCalendar from "../domain/calendar/Calendar";
 import { deleteChecklist, fetchFavorites } from "../domain/checklists/checklistActions";
@@ -13,7 +14,10 @@ import PostHabitFormDialog from "../domain/habits/PostHabitFormDialog";
 import { Task } from "../domain/tasks/models";
 import ScheduledTaskItem from "../domain/tasks/ScheduledTaskItem";
 import { clearTaskDueDate, deleteTask, fetchTasksWithDueDate, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, setTaskDueDate, TaskWithDueDateFetchParams } from "../domain/tasks/taskActions";
-import { UserPokemon } from "../domain/userPokemon/models";
+import { PokemonViewModel, UserPokemon } from "../domain/userPokemon/models";
+import { fetchUserPokemon } from "../domain/userPokemon/userPokemonActions";
+import UserPokemonItem from "../domain/userPokemon/UserPokemonItem";
+import { PatchActivePokemonRequestParams, updateActivePokemon } from "../domain/users/userActions";
 import AppLayout from "../layout/AppLayout";
 import { makeRoutes } from "../navigation/routes";
 
@@ -30,7 +34,10 @@ const Profile: React.FC = () => {
   const [favoriteChecklists, setFavoriteChecklists] = useState<FlatChecklist[] | undefined>(undefined);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
   const [scheduledTasks, setScheduledTasks] = useState<Task[] | undefined>(undefined);
-  const [activeUserPokemon, setactiveUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+
+  const [pokeNodePokemon, setPokenodePokemon] = useState<Pokemon[] | undefined>(undefined);
+  const [activePokemonId, setActivePokemonId] = useState<number | undefined>(undefined);
+  const [activePokemon, setActivePokemon] = useState<UserPokemon | undefined>(undefined);
 
   // Params for a checklist to be posted if user opens POST form
   const [habitTitle, setHabitTitle] = useState<string | undefined>();
@@ -166,6 +173,23 @@ const Profile: React.FC = () => {
   //   [],
   // );
 
+  const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+
+  const fetchAllUserPokemon = useCallback(
+    () => {
+      fetchUserPokemon(jwt)
+        .then(res => {
+          const userPokeObjs = res.data;
+
+          setUserPokemon(userPokeObjs);
+        })
+        .catch(() => snackbar.enqueueSnackbar('User Pokemon fetch failed!', { variant: 'error' }));
+    },
+    [jwt, snackbar],
+  );
+
+  useEffect(fetchAllUserPokemon, []);
+
   const deleteChecklistById = useCallback(
     (id: number) => deleteChecklist(jwt, id)
       .then(res => {
@@ -298,6 +322,69 @@ const Profile: React.FC = () => {
     [jwt, snackbar],
   );
 
+  const addPokenodePokemon = useCallback(
+    (pk: Pokemon) => setPokenodePokemon(prev => (prev ?? []).concat([pk])),
+    [setPokenodePokemon],
+  );
+
+  const pokemonViewModels: PokemonViewModel[] = useMemo(
+    () => (userPokemon ?? []).map(pk => {
+      const pokeNodeObj = (pokeNodePokemon ?? []).find(p => p.name == pk.pokemon.name.toLowerCase());
+
+      return {
+        id: pk.pokemon_id,
+        exp: pk.exp,
+        name: pokeNodeObj?.name ?? '',
+        weight: pokeNodeObj?.weight ?? 0,
+        height: pokeNodeObj?.height ?? 0,
+        sprite: pokeNodeObj?.sprites?.front_default ?? '',
+        types: pokeNodeObj?.types ?? [],
+      };
+    }),
+    [pokeNodePokemon, userPokemon],
+  );
+  console.log(pokemonViewModels);
+
+  const pokeNodeApi = useMemo(() => new PokemonClient(), []);
+
+  // API callbacks
+
+  const fetchPokeNodeData = useCallback(
+    (pokemonName: string) => {
+      pokeNodeApi.getPokemonByName(pokemonName.toLowerCase())
+        .then(pk => addPokenodePokemon(pk))
+        .catch(
+          err => snackbar
+            .enqueueSnackbar(
+              'An error occurred while fetching your Pokemon data - please try again later!',
+              { variant: 'error' },
+            ),
+        );
+    },
+    [addPokenodePokemon, pokeNodeApi, snackbar],
+  );
+
+  const designateActivePokemon = useCallback(
+    (params: PatchActivePokemonRequestParams) => updateActivePokemon(jwt, params)
+      .then(res => {
+        const newActivePokemonId = res.data.user.active_pokemon_id;
+        setActivePokemonId(newActivePokemonId);
+        snackbar.enqueueSnackbar('New Pokemon active!', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Active Pokemon update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  useEffect(fetchAllUserPokemon, []);
+
+  useEffect(
+    () => {
+      const pokemonNames = (userPokemon ?? []).map(p => p.pokemon.name);
+      pokemonNames.forEach((name) => fetchPokeNodeData(name));
+    },
+    [userPokemon],
+  );
+
   return (
     <AppLayout>
       <CssBaseline />
@@ -327,7 +414,7 @@ const Profile: React.FC = () => {
       </Box>
       <Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
-          <Typography variant="h5" sx={{ pt: 2, pr: 3 }}>
+          <Typography variant="h5" sx={{ pt: 7, pr: 3 }}>
             {"Habits"}
           </Typography>
           <Button variant="contained" size="small" onClick={handleCreateHabitOpen}>Add a Habit</Button>
@@ -377,11 +464,22 @@ const Profile: React.FC = () => {
         </Typography>
         <UserCalendar />
       </Box>
-      {/* <Box>
+      <Box sx={{ pb: 4 }}>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Active Pokemon"}
         </Typography>
-      </Box> */}
+        {
+          !!pokemonViewModels?.length
+            ? (pokemonViewModels.map(
+              (pokemon) => (
+                <UserPokemonItem
+                  key={`userPokemon-${pokemon.id}`}
+                  {...pokemon}
+                />))
+            )
+            : <span>'No current Pokemon!'</span>
+        }
+      </Box>
       <Box sx={{ pb: 5 }}>
         <Typography variant="h5" sx={{ pt: 2 }}>
           {"Favorite Checklists"}
