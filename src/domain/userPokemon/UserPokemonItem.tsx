@@ -14,8 +14,6 @@ const Item = styled(Paper)(({ theme }) => ({
 type Props = PokemonViewModel;
 
 const UserPokemonItem: React.FC<Props> = (props) => {
-    console.log(props.sprite);
-
     return (
         <Grid item sx={{ p: 4, textAlign: 'center' }} xs={3}>
             <Item>
