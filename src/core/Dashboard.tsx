@@ -417,7 +417,27 @@ const Dashboard: React.FC = (props) => {
   // end region
 
   // region Pokemon API callbacks and handlers
+  const addActivePokemonExp = useCallback(
+    () => {
+      if (!user?.active_pokemon_id) {
+        console.log('User is undefined or has no active pokemon - bailing out of exp add');
+        return;
+      }
 
+      const expAward = BASE_POKEMON_EXP_AWARD;
+
+      addExpToPokemon(jwt, { pokemon_id: user?.active_pokemon_id ?? 0, exp: expAward })
+        .then(res => {
+          const userPokemon = res.data['user pokemon'];
+
+          console.log(`Awarded ${userPokemon.exp}`);
+
+          snackbar.enqueueSnackbar(`Your active pokemon was awarded ${expAward} EXP!`, { variant: 'success' });
+        })
+        .catch(() => snackbar.enqueueSnackbar('Failed to award EXP to active pokemon!', { variant: 'error' }));
+    },
+    [jwt, snackbar, user],
+  );
 
   // end region
 
