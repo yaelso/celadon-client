@@ -11,12 +11,9 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 type Props = {
+    id: number;
     name: string;
-    // type: Type[];
-    weight: number;
-    height: number;
     exp: number;
-    level: number;
 };
 
 const UserPokemonItem: React.FC<Props> = (props) => {
@@ -35,13 +32,15 @@ const UserPokemonItem: React.FC<Props> = (props) => {
                     <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Poison Type</Typography>
                 </Box>
                 <Box display='flex' justifyContent='center'>
-                    <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Height: {props.height}</Typography>
-                    <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Weight: {props.weight}</Typography>
+                    {/* <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Height: {props.height}</Typography>
+                    <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Weight: {props.weight}</Typography> */}
+                    <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Height: 0</Typography>
+                    <Typography variant="body2" sx={{ pb: 1, p: 2 }}>Weight: 0</Typography>
                 </Box>
                 <Divider />
                 <Box display='flex' justifyContent='space-around'>
-                    <Typography sx={{ pt: 2, pb: 2, fontSize: 17 }}>Level {props.level}</Typography>
-                    <Typography sx={{ pt: 2, pb: 2, fontSize: 17 }}>{props.exp} EXP</Typography>
+                    <Typography sx={{ pt: 2, pb: 2, fontSize: 17 }}>Level 0</Typography>
+                    <Typography sx={{ pt: 2, pb: 2, fontSize: 17 }}>0 EXP</Typography>
                 </Box>
                 <Switch />
             </Item>

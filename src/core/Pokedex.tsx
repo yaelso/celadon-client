@@ -3,7 +3,8 @@ import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useLocalStorage } from '../applicationState/hooks';
-import UserPokemon from '../domain/userPokemon/UserPokemon';
+import { UserPokemon } from '../domain/userPokemon/models';
+import UserPokemonItem from '../domain/userPokemon/UserPokemonItem';
 import { fetchUserPokemon } from '../domain/userPokemon/userPokemonActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
@@ -20,10 +21,10 @@ const Pokedex: React.FC = () => {
   const routes = makeRoutes();
 
   const snackbar = useSnackbar();
-
-  const [userPokemon, setUserPokemon] = useState(undefined);
-
   const [jwt, _] = useLocalStorage('authToken');
+
+  const [userPokemon, setUserPokemon] = useState<UserPokemon[] | undefined>(undefined);
+
 
   // API callbacks
   const fetchAllUserPokemon = () => fetchUserPokemon(jwt)
@@ -46,13 +47,11 @@ const Pokedex: React.FC = () => {
       </Box>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ pt: 5, justifyContent: 'center' }}>
         {!!userPokemon?.length ? (userPokemon.map((pokemon) => (
-          <UserPokemon
-            key={`userPokemon-${userPokemon.id}`}
-            name={userPokemon.name}
-            weight={userPokemon.weight}
-            height={userPokemon.height}
-            exp={userPokemon.exp}
-            level={userPokemon.level}
+          <UserPokemonItem
+            key={`userPokemon-${pokemon.pokemon_id}`}
+            id={pokemon.pokemon_id}
+            name={pokemon.name}
+            exp={pokemon.exp}
           />))) : "No current Pokemon!"}
       </Grid>
     </AppLayout>
