@@ -15,12 +15,12 @@ import Categories from '../domain/categories/CategoryItem';
 import { deleteCategory, fetchCategories, postCategory, PostCategoryParams } from '../domain/categories/categoryActions';
 import { Category } from '../domain/categories/models';
 import PostCategoryFormDialog from '../domain/categories/PostCategoryFormDialog';
-import { deleteChecklist, favoriteChecklist, postChecklist, PostChecklistParams, unfavoriteChecklist } from '../domain/checklists/checklistActions';
+import { archiveChecklist, deleteChecklist, favoriteChecklist, postChecklist, PostChecklistParams, unarchiveChecklist, unfavoriteChecklist } from '../domain/checklists/checklistActions';
 import { Checklist } from '../domain/checklists/models';
 import MoreChecklistContextMenu from '../domain/checklists/MoreChecklistContextMenu';
 import PostChecklistFormDialog from '../domain/checklists/PostChecklistFormDialog';
 import MoreTaskContextMenu from '../domain/tasks/MoreTaskContextMenu';
-import { deleteTask, postTask, PostTaskParams } from '../domain/tasks/taskActions';
+import { clearTaskDueDate, deleteTask, markTaskComplete, markTaskIncomplete, markTaskInProgress, markTaskNotInProgress, PatchDueDateRequestParams, postTask, PostTaskParams, setTaskDueDate } from '../domain/tasks/taskActions';
 import AppLayout from '../layout/AppLayout';
 import { makeRoutes } from '../navigation/routes';
 import CategoryItem from '../domain/categories/CategoryItem';
@@ -28,6 +28,7 @@ import { postUser } from '../domain/users/userActions';
 import { Task } from '../domain/tasks/models';
 import { addExpToPokemon } from '../domain/userPokemon/userPokemonActions';
 import { User } from '../domain/users/models';
+import { Preview } from '@mui/icons-material';
 
 
 type FlatCategory = Omit<Category, 'checklists'>;
@@ -91,7 +92,7 @@ const Dashboard: React.FC = (props) => {
     ), [categories, checklistsByCategoryId]
   );
 
-  // region Category API calls & handlers
+  // region Category API callbacks & handlers
 
   const fetchAllCategories = useCallback(
     () => fetchCategories(jwt)
@@ -175,7 +176,7 @@ const Dashboard: React.FC = (props) => {
 
   // end region
 
-  // region Checklist API calls & handlers
+  // region Checklist API callbacks & handlers
   const postNewChecklist = useCallback(
     (params: PostChecklistParams) => {
       postChecklist(jwt, params)
@@ -194,15 +195,15 @@ const Dashboard: React.FC = (props) => {
   const patchFavoriteChecklist = useCallback(
     (id: number) => favoriteChecklist(jwt, id)
       .then(res => {
-        const favorited_status = res.data.checklist.is_favorited;
+        const newList = res.data.checklist;
 
-        const newChecklists = checklists.map(checklist => {
-          if (checklist.id === id) {
-            return { ...checklist, is_favorited: favorited_status };
+        setChecklists((prev) => prev.filter((newList) => {
+          if (newList.id === id) {
+            const adjustList = { ...newList, is_favorited: true }
+            const newLists = prev.concat([adjustList])
           }
-        })
+        }))
 
-        setChecklists(newChecklists);
         snackbar.enqueueSnackbar('Checklist favorited', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Checklist favorite failed!', { variant: 'error' })),
@@ -212,18 +213,53 @@ const Dashboard: React.FC = (props) => {
   const patchUnfavoriteChecklist = useCallback(
     (id: number) => unfavoriteChecklist(jwt, id)
       .then(res => {
-        const favorited_status = res.data.checklist.is_favorited;
+        const newList = res.data.checklist;
+
+        setChecklists((prev) => prev.filter((newList) => {
+          if (newList.id === id) {
+            const adjustList = { ...newList, is_favorited: false }
+            return prev.concat([adjustList])
+          }
+        }))
+        snackbar.enqueueSnackbar('Checklist unfavorited', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist unfavorite failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchArchiveChecklist = useCallback(
+    (id: number) => archiveChecklist(jwt, id)
+      .then(res => {
+        const archival_status = res.data.checklist.is_archived;
 
         const newChecklists = checklists.map(checklist => {
           if (checklist.id === id) {
-            return { ...checklist, is_favorited: favorited_status };
+            return { ...checklist, is_archived: archival_status }
           }
         })
 
         setChecklists(newChecklists);
-        snackbar.enqueueSnackbar('Checklist unfavorited', { variant: 'success' });
+        snackbar.enqueueSnackbar('Checklist archived', { variant: 'success' });
       })
-      .catch(() => snackbar.enqueueSnackbar('Checklist unfavorite failed!', { variant: 'error' })),
+      .catch(() => snackbar.enqueueSnackbar('Checklist archive attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchUnarchiveChecklist = useCallback(
+    (id: number) => unarchiveChecklist(jwt, id)
+      .then(res => {
+        const archival_status = res.data.checklist.is_archived;
+
+        const newChecklists = checklists.map(checklist => {
+          if (checklist.id === id) {
+            return { ...checklist, is_archived: archival_status };
+          }
+        })
+
+        setChecklists(newChecklists);
+        snackbar.enqueueSnackbar('Checklist unarchived', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Checklist unarchive attempt failed!', { variant: 'error' })),
     [jwt, snackbar],
   );
 
@@ -242,7 +278,7 @@ const Dashboard: React.FC = (props) => {
 
   // end region
 
-  // region Task API calls
+  // region Task API callbacks and handlers
 
   const postNewTask = useCallback(
     (params: PostTaskParams) => {
@@ -255,6 +291,114 @@ const Dashboard: React.FC = (props) => {
         })
         .catch(() => snackbar.enqueueSnackbar('Task creation failed!', { variant: 'error' }));
     },
+    [jwt, snackbar],
+  );
+
+  const patchTaskInProgress = useCallback(
+    (id: number) => markTaskInProgress(jwt, id)
+      .then(res => {
+        const progress = res.data.task.in_progress;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, in_progress: progress }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskNotInProgress = useCallback(
+    (id: number) => markTaskNotInProgress(jwt, id)
+      .then(res => {
+        const progress = res.data.task.in_progress;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, in_progress: progress }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked not in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskComplete = useCallback(
+    (id: number) => markTaskComplete(jwt, id)
+      .then(res => {
+        const completion_status = res.data.task.is_complete;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, is_complete: completion_status }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked complete', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskIncomplete = useCallback(
+    (id: number) => markTaskIncomplete(jwt, id)
+      .then(res => {
+        const completion_status = res.data.task.is_complete;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, is_complete: completion_status }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const patchTaskDueDate = useCallback(
+    (id: number, params: PatchDueDateRequestParams) => setTaskDueDate(jwt, id, params)
+      .then(res => {
+        const deadline = res.data.task.due_date;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, due_date: deadline }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task due date set', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
+    [jwt, snackbar],
+  );
+
+  const removeDueDate = useCallback(
+    (id: number) => clearTaskDueDate(jwt, id)
+      .then(res => {
+        const deadline = res.data.task.due_date;
+
+        const newTasks = tasks.map(task => {
+          if (task.id === id) {
+            return { ...task, due_date: deadline }
+          }
+        })
+
+        setTasks(newTasks);
+        snackbar.enqueueSnackbar('Task due date cleared', { variant: 'success' });
+      })
+      .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
     [jwt, snackbar],
   );
 
@@ -272,7 +416,7 @@ const Dashboard: React.FC = (props) => {
 
   // end region
 
-  // region Pokemon API calls
+  // region Pokemon API callbacks and handlers
 
 
   // end region
@@ -312,12 +456,15 @@ const Dashboard: React.FC = (props) => {
           removeChecklist={deleteChecklistById}
           tagChecklistFavorite={patchFavoriteChecklist}
           tagChecklistUnfavorite={patchUnfavoriteChecklist}
-          // tagChecklistArchive={}
+          tagChecklistArchive={patchArchiveChecklist}
           addTask={postNewTask}
           removeTask={deleteTaskById}
-        // tagTaskInProgress={ }
-        // tagTaskComplete={ }
-        // tagScheduleTask={ }
+          tagTaskInProgress={patchTaskInProgress}
+          tagTaskNotInProgress={patchTaskNotInProgress}
+          tagTaskComplete={patchTaskComplete}
+          tagTaskIncomplete={patchTaskIncomplete}
+          assignDueDate={patchTaskDueDate}
+          removeDueDate={removeDueDate}
         />
       ))) : <Box sx={{ justifyContent: 'center' }}><Typography sx={{ textAlign: 'center' }}>No current categories! Please make a context category to house your lists</Typography></Box>}
     </AppLayout>

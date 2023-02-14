@@ -16,12 +16,6 @@ import { makeRoutes } from '../navigation/routes';
 
 type FlatChecklist = Omit<Checklist, 'tasks'>;
 
-// type Props = {
-//   title: string;
-//   description: string;
-//   tasks: Task[];
-// };
-
 const Archive: React.FC = () => {
   const routes = makeRoutes();
   const snackbar = useSnackbar();
@@ -53,6 +47,16 @@ const Archive: React.FC = () => {
       .catch(() => snackbar.enqueueSnackbar('Archived checklists fetch failed!', { variant: 'error' })),
     [jwt, snackbar],
   );
+
+
+  //   const handleUnarchiveSubmit = useCallback(
+  //     () => {
+  //         tagChecklistArchive(id);
+  //     },
+  //     [unarchiveChecklist, id],
+  // );
+
+  // tagChecklistUnarchive: (id: number) => void;
 
   return (
     <AppLayout>
