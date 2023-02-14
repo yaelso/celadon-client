@@ -181,14 +181,14 @@ const Dashboard: React.FC = (props) => {
   const patchFavoriteChecklist = useCallback(
     (id: number) => favoriteChecklist(jwt, id)
       .then(res => {
-        const newList = res.data.checklist;
+        const newChecklist = res.data.checklist;
 
-        setChecklists((prev) => prev.filter((newList) => {
-          if (newList.id === id) {
-            const adjustList = { ...newList, is_favorited: true }
-            const newLists = prev.concat([adjustList])
-          }
-        }))
+        setChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
 
         snackbar.enqueueSnackbar('Checklist favorited', { variant: 'success' });
       })
@@ -199,14 +199,14 @@ const Dashboard: React.FC = (props) => {
   const patchUnfavoriteChecklist = useCallback(
     (id: number) => unfavoriteChecklist(jwt, id)
       .then(res => {
-        const newList = res.data.checklist;
+        const newChecklist = res.data.checklist;
 
-        setChecklists((prev) => prev.filter((newList) => {
-          if (newList.id === id) {
-            const adjustList = { ...newList, is_favorited: false }
-            return prev.concat([adjustList])
-          }
-        }))
+        setChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
         snackbar.enqueueSnackbar('Checklist unfavorited', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Checklist unfavorite failed!', { variant: 'error' })),
@@ -216,15 +216,14 @@ const Dashboard: React.FC = (props) => {
   const patchArchiveChecklist = useCallback(
     (id: number) => archiveChecklist(jwt, id)
       .then(res => {
-        const archival_status = res.data.checklist.is_archived;
+        const newChecklist = res.data.checklist;
 
-        const newChecklists = checklists.map(checklist => {
-          if (checklist.id === id) {
-            return { ...checklist, is_archived: archival_status }
-          }
-        })
-
-        setChecklists(newChecklists);
+        setChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
         snackbar.enqueueSnackbar('Checklist archived', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Checklist archive attempt failed!', { variant: 'error' })),
@@ -234,15 +233,14 @@ const Dashboard: React.FC = (props) => {
   const patchUnarchiveChecklist = useCallback(
     (id: number) => unarchiveChecklist(jwt, id)
       .then(res => {
-        const archival_status = res.data.checklist.is_archived;
+        const newChecklist = res.data.checklist;
 
-        const newChecklists = checklists.map(checklist => {
-          if (checklist.id === id) {
-            return { ...checklist, is_archived: archival_status };
-          }
-        })
-
-        setChecklists(newChecklists);
+        setChecklists((prev) => {
+          const oldChecklistIndex = prev.findIndex(p => p.id === newChecklist.id);
+          return prev.slice(0, oldChecklistIndex)
+            .concat([newChecklist])
+            .concat(prev.slice(oldChecklistIndex + 1));
+        });
         snackbar.enqueueSnackbar('Checklist unarchived', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Checklist unarchive attempt failed!', { variant: 'error' })),
@@ -283,15 +281,14 @@ const Dashboard: React.FC = (props) => {
   const patchTaskInProgress = useCallback(
     (id: number) => markTaskInProgress(jwt, id)
       .then(res => {
-        const progress = res.data.task.in_progress;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, in_progress: progress }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
@@ -301,15 +298,14 @@ const Dashboard: React.FC = (props) => {
   const patchTaskNotInProgress = useCallback(
     (id: number) => markTaskNotInProgress(jwt, id)
       .then(res => {
-        const progress = res.data.task.in_progress;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, in_progress: progress }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task marked not in-progress', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
@@ -319,15 +315,14 @@ const Dashboard: React.FC = (props) => {
   const patchTaskComplete = useCallback(
     (id: number) => markTaskComplete(jwt, id)
       .then(res => {
-        const completion_status = res.data.task.is_complete;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, is_complete: completion_status }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task marked complete', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
@@ -337,15 +332,14 @@ const Dashboard: React.FC = (props) => {
   const patchTaskIncomplete = useCallback(
     (id: number) => markTaskIncomplete(jwt, id)
       .then(res => {
-        const completion_status = res.data.task.is_complete;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, is_complete: completion_status }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task marked in-progress', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task progress update attempt failed!', { variant: 'error' })),
@@ -355,15 +349,14 @@ const Dashboard: React.FC = (props) => {
   const patchTaskDueDate = useCallback(
     (id: number, params: PatchDueDateRequestParams) => setTaskDueDate(jwt, id, params)
       .then(res => {
-        const deadline = res.data.task.due_date;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, due_date: deadline }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task due date set', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
@@ -373,15 +366,14 @@ const Dashboard: React.FC = (props) => {
   const removeDueDate = useCallback(
     (id: number) => clearTaskDueDate(jwt, id)
       .then(res => {
-        const deadline = res.data.task.due_date;
+        const newTask = res.data.task;
 
-        const newTasks = tasks.map(task => {
-          if (task.id === id) {
-            return { ...task, due_date: deadline }
-          }
-        })
-
-        setTasks(newTasks);
+        setTasks((prev) => {
+          const oldTaskIndex = prev.findIndex(p => p.id === newTask.id);
+          return prev.slice(0, oldTaskIndex)
+            .concat([newTask])
+            .concat(prev.slice(oldTaskIndex + 1));
+        });
         snackbar.enqueueSnackbar('Task due date cleared', { variant: 'success' });
       })
       .catch(() => snackbar.enqueueSnackbar('Task due date update attempt failed!', { variant: 'error' })),
