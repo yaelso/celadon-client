@@ -119,7 +119,7 @@ const Home: React.FC = () => {
               {"Switch between a dashboard view of all your contexts, an archive, a Pokedex, and a personal profile populated with a selection of your scheduled items, active Pokemon, habits, and favorites."}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              {"Celadon makes use of Pokenode-TS, Material UI & Emotion, Notistack, TypeScript, React Router, Firebase Google auth, and flask-firebase-auth. Explore its repositories below!"}
+              {"Celadon makes use of Pokenode-TS, Material UI & Emotion, Notistack, TypeScript, React Router, React Calender, Firebase Google auth, and flask-firebase-auth. Explore its repositories below!"}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Button href="https://github.com/yaelso/celadon-client" target="_blank" size="small">Frontend Repository</Button>
