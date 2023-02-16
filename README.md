@@ -18,18 +18,6 @@ Celadon is a gamified task management web app for busy students and lifelong lea
 ## Features
 Users can login via Google and access a number of views, varying from a dashboard that contains all productivity models belonging to a user, an archive, a Pokedex, and a personal profile.
 
-- User login and auth via Google
-- Category, list, and task creation
-- Archived and favorite checklists, task scheduling, and task progress/completion status markers
-- Incrementable habits
-- Pokemon collection, EXP gathering, and leveling
-
-## Usage Notes
-This client repository lacks Firebase configuration keys! To run locally, you can hook up your own Firebase auth configuration values to the appropriate keys contained in `src/firebase.ts`. 
-
-## Features
-Users can login via Google and access a number of views, varying from a dashboard that contains all productivity models belonging to a user, an archive, a Pokedex, and a personal profile.
-
 #### Dashboard View
 - Category, list, and task creation and deletion
 - Checklist favorites and archive actions
@@ -51,6 +39,9 @@ Users can login via Google and access a number of views, varying from a dashboar
 - Current collected User Pokemon display, with data grabbed from PokeApi
 - EXP and level displays
 - Active Pokemon selection switches
+
+## Usage Notes
+This client repository lacks Firebase configuration keys! To run locally, you can hook up your own Firebase auth configuration values to the appropriate keys contained in `src/firebase.ts`. 
 
 ## Installation
 1. Clone repository
